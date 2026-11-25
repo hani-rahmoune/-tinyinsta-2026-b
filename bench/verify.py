@@ -3,6 +3,7 @@
 est MESURÉ ici, sur le projet, plutôt que supposé.
 
   python3 bench/verify.py            (depuis la racine du dépôt, dans Cloud Shell)
+  python3 bench/verify.py E F G      (seulement certaines sections)
 
 Écrit les preuves brutes dans raw/verify/ et un résumé lisible sur la sortie.
 
@@ -34,6 +35,9 @@ PROJECT = os.environ.get("PROJECT") or sh("gcloud", "config", "get-value", "proj
 os.environ["GOOGLE_CLOUD_PROJECT"] = PROJECT
 START = "2026-11-23T00:00:00Z"
 NOW = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+# Entrées de journal lues par run (les plus récentes de la fenêtre, donc en régime
+# établi) : une médiane n'a pas besoin des 6 000 lignes, et la lecture est lente.
+E_LIMIT = int(os.environ.get("E_LIMIT", "2000"))
 VERSION_OF = {"p1": "fixed1", "p2_n1": "fixed1", "p2_n2": "fixed2",
               "p2_n4": "fixed4", "p3_n1": "fix1"}
 
@@ -273,7 +277,7 @@ def pending():
         flt = (f'resource.type="gae_app" AND resource.labels.version_id="{version}" AND '
                f'logName="projects/{PROJECT}/logs/appengine.googleapis.com%2Frequest_log" AND '
                f'timestamp>="{iso(t0 + 10)}" AND timestamp<="{iso(t1 + 5)}"')
-        raw = sh("gcloud", "logging", "read", flt, "--limit=10000", "--freshness=30d",
+        raw = sh("gcloud", "logging", "read", flt, f"--limit={E_LIMIT}", "--freshness=30d",
                  "--format=json(protoPayload.latency,protoPayload.pendingTime,"
                  "protoPayload.instanceId,protoPayload.status)")
         if raw.startswith("ERREUR"):
@@ -405,6 +409,9 @@ def prices():
 
 if __name__ == "__main__":
     print(f"projet {PROJECT}   relevé {NOW}")
-    for step in (platform, code_path, version_events, gunicorn, pending, usage, prices):
-        step()
+    steps = dict(A=code_path, B=platform, C=version_events, D=gunicorn,
+                 E=pending, F=usage, G=prices)
+    todo = [a.upper() for a in sys.argv[1:]] or list("BACDEFG")
+    for k in todo:
+        steps[k]()
     print(f"\nPreuves brutes écrites dans {OUT}/")
