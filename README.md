@@ -198,8 +198,16 @@ lectures d'entités (tarif à revérifier sur la grille Datastore courante) :
 | Repli par auteur | 100 | 2 021 | 2 021 M | **~1 213 $** |
 
 L'écart entre les deux régimes est donc d'un facteur **~100 sur la facture**, pour
-un utilisateur qui suit 100 comptes au lieu de 20. *TODO : relever les lectures
-réellement facturées sur la page Facturation pour trancher entre les deux bornes.*
+un utilisateur qui suit 100 comptes au lieu de 20.
+
+Nous n'avons pas pu relever les lectures réellement facturées (§ 5 : le compte est
+crédité et la facture affiche 0 $). **C'est la mesure elle-même qui tranche** :
+si le régime `IN` lisait 121 entités à F = 5 et 421 à F = 20, le temps serveur
+serait multiplié par ~3,5 entre ces deux points. Il passe de 29,1 à 31,4 ms, soit
++8 %. Le nombre d'entités réellement matérialisées dans le régime `IN` est donc
+**proche de 21** (1 `User` + les 20 `Post` retournés), et la borne de 421 n'est
+qu'un majorant du travail d'index, pas des entités facturées. Le chiffre défendable
+pour F = 20 est donc **~13 $ par million de timelines**.
 
 ### 2.2 Partie 2 — Capacité
 
@@ -503,28 +511,47 @@ Voir § 5.
 
 ## 5. Coût de la campagne
 
+**Montant facturé : 0 $.** Le projet est rattaché à un *Billing Account for
+Education* ; le rapport de facturation affiche 0 $ de dépense sur 30 jours, les
+crédits couvrant l'intégralité de la consommation. Deux réserves d'honnêteté : les
+données de facturation GCP ont un retard de l'ordre de 24 h, et la campagne s'est
+terminée le jour même du relevé ; et un montant net de crédits ne dit rien de la
+consommation brute.
+
+Le chiffre utile n'est donc pas la facture, mais **ce que la campagne aurait coûté
+hors crédits**. Estimation à partir des volumes réellement produits :
+
 | Poste | Quantité | Coût estimé |
 |---|---|---|
-| Écritures (seeding) | ~610 000 entités écrites (dont ~200 000 perdues par les échecs sur `u10000`/`p1000`) | ~1,10 $ |
+| Écritures (seeding) | ~610 000 entités écrites, dont ~200 000 perdues par les échecs sur `u10000` et `p1000` | ~1,10 $ |
 | Suppressions | 1 `bulk-delete` complet + purges partielles, ~250 000 entités | ~0,15 $ |
-| Lectures (54 runs, ~120 000 requêtes timeline) | voir ci-dessous | ~0,50 $ |
+| Lectures (54 runs, ~120 000 requêtes timeline) | ~3,3 M lectures d'entités (détail ci-dessous) | ~2,00 $ |
 | Heures d'instance `fixed1` (B1) | ~23 h × 1 instance | ~1,15 $ |
 | Heures d'instance `fixed2` / `fixed4` / `fix1` (B1) | ~0,3 h × 2 + ~0,45 h × 4 + ~0,3 h × 1 | ~0,14 $ |
-| Version par défaut (F1, autoscaling) | ralentie à zéro instance hors usage | ~0 $ |
-| Stockage | ~400 000 petites entités + index | < 0,10 $ |
-| **Total estimé** | | **~3 $** |
+| Version par défaut (F1, autoscaling) | retombe à 0 instance hors usage (vérifié : `gcloud app instances list` → 0) | ~0 $ |
+| Stockage | ~400 000 petites entités + index composite | < 0,10 $ |
+| **Total estimé hors crédits** | | **~4,65 $** |
 
-Les ~120 000 requêtes de mesure se répartissent très inégalement : les runs à
-F ≥ 30 ne totalisent que ~400 requêtes (le service est trop lent pour en faire
-plus en 45 s) mais lisent ~2 000 entités chacune, tandis que les runs de la
-partie 2 totalisent ~100 000 requêtes à ~21 entités chacune.
+Les ~3,3 M de lectures se répartissent très inégalement. Les ~118 000 requêtes des
+parties 2 et 3 tournent toutes à F = 20 dans le régime `IN`, donc ~21 entités
+chacune : ~2,5 M de lectures. Les runs de la partie 1 à F ≥ 30 ne totalisent que
+~400 requêtes — le service est trop lent pour en faire plus en 45 s — mais lisent
+jusqu'à 2 021 entités chacune, soit ~0,5 M de lectures à elles seules. **Autrement
+dit : 0,3 % des requêtes de la campagne consomment 15 % de ses lectures.** C'est la
+même pathologie que la falaise de la partie 1, vue depuis la facture.
 
-*TODO avant rendu : relever les chiffres réels (lectures, écritures, heures
-d'instance) sur la page Facturation du projet et remplacer ce tableau d'estimations.*
+Deux dépenses étaient évitables et méritent d'être nommées :
 
-Le budget de 20 $ configuré en alerte n'a jamais été approché.
+- **`fixed1` est resté démarré ~23 h** entre la fin de ses mesures et son arrêt
+  effectif, par oubli : à elle seule, la plus grosse ligne du tableau (~25 % du
+  total estimé). Sur un projet facturé, ce genre d'oubli coûte plus cher que la
+  mesure elle-même.
+- **~200 000 écritures perdues** sur les jeux `u10000` et `p1000`, abandonnés après
+  des échecs de seeding dus au bridage en écriture d'une base Firestore neuve
+  (~500 écritures/s tant qu'elle n'a pas « chauffé »).
 
----
+Le budget de 20 $ configuré en alerte n'a jamais été approché, ni en facturé (0 $)
+ni en estimé (~4,65 $).
 
 ## Annexe — Reproduire la campagne
 
