@@ -28,7 +28,7 @@ for c in 1 2 4 8 16 32 64; do
   echo "== $log   C=$c  duree=$DUR"
   TINY_PREFIX=base TINY_USERS=1000 TINY_LIMIT=20 TINY_LOG="$log" \
     python -m locust -f bench/locustfile.py --headless \
-      -u "$c" -r "$c" -t "$DUR" --only-summary --host "$URL"
+      -u "$c" -r "$c" -t "$DUR" --only-summary --exit-code-on-error 0 --host "$URL"
 done
 
 echo

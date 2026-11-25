@@ -27,13 +27,13 @@ run() {   # run <nom_du_log> <prefixe_du_jeu> <U_du_jeu>
   echo "== $log   prefix=$prefix  U=$nusers  durée=$DUR"
   TINY_PREFIX="$prefix" TINY_USERS="$nusers" TINY_LIMIT=20 TINY_LOG="$log" \
     python -m locust -f bench/locustfile.py --headless \
-      -u 1 -r 1 -t "$DUR" --only-summary --host "$URL"
+      -u 1 -r 1 -t "$DUR" --only-summary --exit-code-on-error 0 --host "$URL"
 }
 
 # --- Facteur U (P=20, F=20) ---------------------------------------------
 run p1_u_100   u100   100
 run p1_u_1000  base   1000
-run p1_u_10000 u10000 10000
+run p1_u_10000 u10k 10000
 
 # --- Facteur P (U=100, F=20) --------------------------------------------
 # NB : p1_u_100 ci-dessus EST le point P=20 de cette série (U=100, F=20).
