@@ -26,8 +26,11 @@ OUT = os.path.join(ROOT, "raw", "verify")
 os.makedirs(OUT, exist_ok=True)
 
 
-def sh(*args):
-    r = subprocess.run(args, capture_output=True, text=True)
+def sh(*args, timeout=180):
+    try:
+        r = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return f"ERREUR: délai de {timeout}s dépassé"
     return (r.stdout if r.returncode == 0 else "ERREUR: " + r.stderr).strip()
 
 
@@ -270,9 +273,17 @@ def pending():
     section("E. Journaux de requêtes App Engine : attente AVANT l'instance (pendingTime)")
     print(f"{'run':14} {'version':7} {'requêtes':>8} {'instances':>9} "
           f"{'latence méd. (ms)':>17} {'pendingTime méd. (ms)':>21} {'avec pending':>12}")
+    # Résultats conservés run par run : une reprise (E_RUNS=p3_n1_c64 ...) complète
+    # le fichier au lieu de l'écraser.
+    path = os.path.join(OUT, "pending_time.csv")
+    done = {}
+    if os.path.exists(path):
+        with open(path) as f:
+            done = {r["run"]: r for r in csv.DictReader(f)}
+    only = [r for r in os.environ.get("E_RUNS", "").split(",") if r]
     rows = []
     for name, version, t0, t1 in run_windows():
-        if not name.startswith(("p2_", "p3_")):
+        if not name.startswith(("p2_", "p3_")) or (only and name not in only):
             continue
         flt = (f'resource.type="gae_app" AND resource.labels.version_id="{version}" AND '
                f'logName="projects/{PROJECT}/logs/appengine.googleapis.com%2Frequest_log" AND '
@@ -294,10 +305,10 @@ def pending():
         print(f"{name:14} {version:7} {r['requests']:>8} {r['instances']:>9} "
               f"{r['latency_ms_median']!s:>17} {r['pending_ms_median']!s:>21} {len(pen):>12}",
               flush=True)
-    if rows:
-        with open(os.path.join(OUT, "pending_time.csv"), "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=list(rows[0]))
-            w.writeheader(); w.writerows(rows)
+        done[name] = r
+        with open(path, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(r))
+            w.writeheader(); w.writerows(done[k] for k in sorted(done))
 
 
 # ----------------------------------------------------------------------- F
