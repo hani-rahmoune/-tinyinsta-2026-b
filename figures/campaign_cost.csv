@@ -1,0 +1,11 @@
+item,quantity,unit,usd_per_unit_catalogue,catalogue_free_tier_units,usd_list_price_no_free_tier
+entity reads (lookup),93007.0,count,6e-07,50000,0.0558
+entity reads (query),2558333.0,count,6e-07,50000,1.535
+entity reads (keys-only query),50601.0,count,6e-07,50000,0.0304
+entity writes (create),610392.0,count,1.8e-06,20000,1.0987
+entity deletes,39599.0,count,2e-07,20000,0.0079
+instance-hours 20261123t222612 (F1),0.25,hour,0.05,28,0.0125
+instance-hours fix1 (B1),0.27,hour,0.05,9,0.0135
+instance-hours fixed1 (B1),23.2,hour,0.05,9,1.16
+instance-hours fixed2 (B1),0.6,hour,0.05,9,0.03
+instance-hours fixed4 (B1),1.89,hour,0.05,9,0.0945

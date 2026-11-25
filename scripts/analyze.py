@@ -14,9 +14,18 @@ experiment:
 
 An optional _r<k> suffix marks a repeat; repeats are pooled.
 
-Writes figures/fig{1a,1b,2a,2b,3}.{csv,png} plus two extras used by the
-report: figures/summary.csv (per-run diagnostics: instances actually seen,
-HTTP codes, failures) and figures/cost_model.csv (Datastore read model).
+Writes figures/fig{1a,1b,2a,2b,3}.{csv,png} plus extras used by the report:
+  figures/summary.csv            per-run diagnostics (instances actually seen,
+                                 HTTP codes and client errors, before and after
+                                 the warm-up cut)
+  figures/cost_1M_timelines.csv  entity reads per timeline for each of the 26
+                                 datasets, and the cost of 1 million timelines
+  figures/campaign_cost.csv      reads / writes / deletes / instance-hours
+                                 measured on the project, at catalogue prices
+
+The last two read the evidence collected by bench/verify.py in raw/verify/
+(Cloud Monitoring usage, Cloud Billing Catalog prices, measured reads per
+timeline). Nothing in them is typed in by hand.
 
 Missing runs are skipped with a warning, so partial campaigns still plot.
 """
@@ -35,14 +44,34 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
-# One request to /api/timeline?limit=20 reads, at worst, the User entity plus
-# limit entities per author of the IN-expansion (F followees + the user itself).
-LIMIT = 20
-USD_PER_100K_READS = 0.06   # check the current Datastore grid and update here
+LIMIT = 20          # timeline size requested by bench/locustfile.py
 
-# Discontinuite mesuree : la requete GQL IN cede la place au repli par auteur
-# des que la liste d'auteurs (F+1) depasse la limite IN de Datastore.
-CLIFF_F = 30
+# Datastore refuses an IN filter with more than 30 values; measured by
+# bench/verify.py (raw/verify/in_limit.json: 30 -> OK, 31 -> InvalidArgument).
+# main.py:47 builds F+1 authors, so the IN query of main.py:61-64 fails from
+# F = 30 on and main.py:65 falls back to one query per author (main.py:66-72).
+IN_LIMIT = 30
+CLIFF_F = IN_LIMIT
+
+# The 26 datasets of the subject (section 2), as seeded: prefix -> (U, P, F).
+DATASETS = {"u100": (100, 20, 20), "base": (1000, 20, 20), "u10k": (10000, 20, 20),
+            "p10": (100, 10, 20), "p100": (100, 100, 20), "p1000": (100, 1000, 20),
+            **{f"f{f:02d}": (120, 20, f) for f in range(5, 101, 5)}}
+
+
+def reads_per_timeline(P: int, F: int, limit: int = LIMIT) -> tuple[int, str]:
+    """Entities read by one get_timeline (main.py:38-73) and the path taken.
+
+    1 lookup of the User entity (main.py:43), then
+      F+1 <= IN_LIMIT : one IN query returning min(limit, (F+1)*P) posts;
+      F+1 >  IN_LIMIT : the IN query fails, then F+1 queries returning
+                        min(limit, P) posts each.
+    Checked against the instrumented run in raw/verify/reads_per_timeline.csv.
+    """
+    authors = F + 1
+    if authors <= IN_LIMIT:
+        return 1 + min(limit, authors * P), "IN (main.py:61-64)"
+    return 1 + authors * min(limit, P), "repli par auteur (main.py:66-72)"
 
 COL = {1: "#1f4e79", 2: "#c1121f", 4: "#2a9d8f", 8: "#9d4edd"}
 
@@ -68,6 +97,9 @@ def load_run(path: str, warmup: float) -> dict | None:
     if len(kept) < 5:          # very short run: keep everything rather than nothing
         kept = df
 
+    codes_all = df["STATUS"].fillna(0).astype(int).value_counts().sort_index()
+    errs_all = df["ERROR"].dropna().astype(str)
+    errs_all = errs_all[errs_all.str.strip() != ""].value_counts().sort_index()
     ok = kept[kept["STATUS"] == 200]
     span = kept["T_START"].max() - kept["T_START"].min()
     codes = kept["STATUS"].fillna(0).astype(int).value_counts().sort_index()
@@ -75,6 +107,9 @@ def load_run(path: str, warmup: float) -> dict | None:
 
     return {
         "file": os.path.basename(path),
+        "n_rows_all": len(df),
+        "http_codes_all": "|".join(f"{k}:{v}" for k, v in codes_all.items()),
+        "client_errors_all": "|".join(f"{k}:{v}" for k, v in errs_all.items()),
         "n_total": len(kept),
         "n_ok": len(ok),
         "n_fail": int((kept["STATUS"] != 200).sum()),
@@ -83,6 +118,7 @@ def load_run(path: str, warmup: float) -> dict | None:
         "instance_ids": " ".join(str(i)[:12] for i in inst),
         "users_observed_max": int(kept["USERS"].max()) if kept["USERS"].notna().any() else 0,
         "client_ms_median": float(ok["LATENCY_MS"].median()) if len(ok) else np.nan,
+        "client_ms_mean": float(ok["LATENCY_MS"].mean()) if len(ok) else np.nan,
         "client_ms_p95": float(ok["LATENCY_MS"].quantile(0.95)) if len(ok) else np.nan,
         "server_ms_median": float(ok["SERVER_MS"].median()) if ok["SERVER_MS"].notna().any() else np.nan,
         "server_ms_p95": float(ok["SERVER_MS"].quantile(0.95)) if ok["SERVER_MS"].notna().any() else np.nan,
@@ -110,7 +146,7 @@ def pool(rows: list[dict], keys: list[str]) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame()
     df = pd.DataFrame(rows)
-    num = ["client_ms_median", "client_ms_p95", "server_ms_median", "server_ms_p95",
+    num = ["client_ms_median", "client_ms_mean", "client_ms_p95", "server_ms_median", "server_ms_p95",
            "throughput_rps", "window_s"]
     agg = {c: "mean" for c in num}
     agg.update({"n_ok": "sum", "n_fail": "sum", "n_total": "sum",
@@ -140,13 +176,8 @@ def fig1a(raw, out, warmup):
     u = pool(collect(raw, r"p1_u_(?P<U>\d+)(_r\d+)?\.csv$", warmup), ["U"])
     p = pool(collect(raw, r"p1_p_(?P<P>\d+)(_r\d+)?\.csv$", warmup), ["P"])
 
-    # p1_u_100 is U=100, P=20, F=20 -> it is also the P=20 point of the P series.
-    if not u.empty and 100 in set(u["U"]) and not p.empty:
-        row = u[u["U"] == 100].iloc[0].to_dict()
-        row["P"] = 20
-        p = pd.concat([p, pd.DataFrame([row]).drop(columns=["U"])],
-                      ignore_index=True).sort_values("P")
-
+    # Only the values imposed by the protocol: U in {100, 1000, 10000},
+    # P in {10, 100, 1000}.
     if u.empty and p.empty:
         print("  ! fig1a: no p1_u_* / p1_p_* runs", file=sys.stderr)
         return pd.DataFrame()
@@ -187,8 +218,8 @@ def fig1b(raw, out, warmup):
     if f.empty:
         print("  ! fig1b: no p1_f_* runs", file=sys.stderr)
         return f
-    f["network_ms_median"] = f["client_ms_median"] - f["server_ms_median"]
-    f["entity_reads_upper_bound"] = 1 + (f["F"] + 1) * LIMIT
+    f["client_minus_server_ms"] = f["client_ms_median"] - f["server_ms_median"]
+    f["entity_reads_per_timeline"] = [reads_per_timeline(20, int(x))[0] for x in f["F"]]
 
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     ax.plot(f["F"], f["client_ms_median"], "s-", color=COL[2], lw=1.6, ms=5,
@@ -209,11 +240,12 @@ def fig1b(raw, out, warmup):
             ax.plot(xs, a * xs + b, "--", color=col, lw=1.3,
                     label=f"{lab} : {a:.2f} ms/followee")
     if len(hi) and len(lo):
-        ax.axvline(CLIFF_F - 2.5, color="#999999", lw=1, ls=":")
-        note = chr(10).join(["limite IN de Datastore :", "F+1 > 30 auteurs",
-                             "-> repli par auteur", "(main.py:66-72)"])
+        ax.axvline(CLIFF_F - 0.5, color="#999999", lw=1, ls=":")
+        note = chr(10).join(["Datastore : IN limite a 30 valeurs",
+                             "F+1 = 31 auteurs -> exception",
+                             "-> 1 requete par auteur", "(main.py:65-72)"])
         ax.annotate(note,
-                    xy=(CLIFF_F - 2.5, ok["server_ms_median"].max() * .30),
+                    xy=(CLIFF_F - 0.5, ok["server_ms_median"].max() * .30),
                     xytext=(4, ok["server_ms_median"].max() * .72),
                     fontsize=8, color="#444444",
                     arrowprops=dict(arrowstyle="->", color="#999999", lw=1))
@@ -225,7 +257,7 @@ def fig1b(raw, out, warmup):
     fig.tight_layout()
 
     cols = ["F", "server_ms_median", "server_ms_p95", "client_ms_median",
-            "client_ms_p95", "network_ms_median", "entity_reads_upper_bound",
+            "client_ms_p95", "client_minus_server_ms", "entity_reads_per_timeline",
             "n_ok", "n_fail", "instances_observed", "http_codes", "file"]
     save(f[[c for c in cols if c in f]], fig, "fig1b", out)
     return f
@@ -237,7 +269,10 @@ def part2(raw, out, warmup, tag="p2"):
              ["N", "C"])
     if d.empty:
         return d
+    # Little's law L = lambda * W relates C to the MEAN time in the system.
     d["little_latency_ms"] = 1000 * d["C"] / d["throughput_rps"]
+    d["little_vs_mean_pct"] = 100 * (d["little_latency_ms"] / d["client_ms_mean"] - 1)
+    d["little_vs_median_pct"] = 100 * (d["little_latency_ms"] / d["client_ms_median"] - 1)
     return d
 
 
@@ -245,8 +280,9 @@ def fig2(d, out):
     if d.empty:
         print("  ! fig2: no p2_* runs", file=sys.stderr)
         return
-    cols = ["N", "C", "throughput_rps", "client_ms_median", "client_ms_p95",
-            "server_ms_median", "little_latency_ms", "instances_observed",
+    cols = ["N", "C", "throughput_rps", "client_ms_median", "client_ms_mean", "client_ms_p95",
+            "server_ms_median", "little_latency_ms", "little_vs_mean_pct",
+            "little_vs_median_pct", "instances_observed",
             "users_observed_max", "n_ok", "n_fail", "http_codes", "window_s", "file"]
     cols = [c for c in cols if c in d]
 
@@ -258,7 +294,8 @@ def fig2(d, out):
     ax.set_xticks(sorted(d["C"].unique()))
     ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
     style(ax, "concurrent Locust users (C)", "throughput (requests/s)",
-          "Fig. 2a — throughput vs concurrency", "dataset base (U=1000, P=20, F=20)")
+          "Fig. 2a — throughput vs concurrency",
+          "fixed1/fixed2/fixed4 (B1), dataset base (U=1000, P=20, F=20)")
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -268,17 +305,19 @@ def fig2(d, out):
     for n, g in d.groupby("N"):
         c = COL.get(n, "#444")
         ax.plot(g["C"], g["client_ms_median"], "o-", lw=1.8, ms=5, color=c,
-                label=f"N = {n}, measured")
+                label=f"N = {n}, measured median")
+        ax.plot(g["C"], g["client_ms_mean"], "x", ms=7, color=c,
+                label=f"N = {n}, measured mean")
         ax.plot(g["C"], g["little_latency_ms"], "--", lw=1.2, color=c, alpha=.75,
                 label=f"N = {n}, Little (C / throughput)")
     ax.set_xscale("log", base=2)
     ax.set_yscale("log")
     ax.set_xticks(sorted(d["C"].unique()))
     ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
-    style(ax, "concurrent Locust users (C)", "median client latency (ms)",
+    style(ax, "concurrent Locust users (C)", "client latency (ms)",
           "Fig. 2b — latency vs concurrency, against Little's law",
-          "dataset base (U=1000, P=20, F=20)")
-    ax.legend(frameon=False, fontsize=8, ncol=2)
+          "fixed1/fixed2/fixed4 (B1), dataset base (U=1000, P=20, F=20)")
+    ax.legend(frameon=False, fontsize=7, ncol=3)
     fig.tight_layout()
     save(d[cols], fig, "fig2b", out)
 
@@ -306,7 +345,7 @@ def fig3(before, after, out):
         ax.set_xticks(sorted(d["C"].unique()))
         ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
         style(ax, "concurrent Locust users (C)", yl, f"Fig. 3 — {t}, before / after",
-              "1 fixed instance, dataset base")
+              "N=1 (fixed1 vs fix1, B1), dataset base (U=1000, P=20, F=20)")
         ax.set_ylim(bottom=0)
         ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -318,22 +357,85 @@ def fig3(before, after, out):
 
 
 # ------------------------------------------------------------------ extras
-def cost_model(out):
+def _price(prices, sku):
+    """Unit price above the free tier, and the free-tier size, from the catalogue."""
+    for k in prices:
+        if k["service"] == "App Engine" and k["sku"] == sku:
+            tiers = sorted(k["tiers"])
+            free = tiers[1][0] if len(tiers) > 1 and tiers[0][1] == 0 else 0
+            return tiers[-1][1], free, k["unit"]
+    raise KeyError(sku)
+
+
+def costs(raw, out):
+    vdir = os.path.join(raw, "verify")
+    try:
+        import json
+        prices = json.load(open(os.path.join(vdir, "prices.json")))
+        usage = json.load(open(os.path.join(vdir, "usage.json")))
+        measured = pd.read_csv(os.path.join(vdir, "reads_per_timeline.csv"))
+    except OSError as e:
+        print(f"  ! costs: run bench/verify.py first ({e})", file=sys.stderr)
+        return
+    # Datastore operations of the App Engine default database are billed under
+    # the App Engine service in the catalogue (SKUs "Cloud Datastore ...").
+    read_usd, read_free, _ = _price(prices, "Cloud Datastore Read Ops")
+    write_usd, write_free, _ = _price(prices, "Cloud Datastore Entity Writes")
+    del_usd, del_free, _ = _price(prices, "Cloud Datastore Entity Deletes")
+    b_usd, b_free, _ = _price(prices, "Backend Instances")
+    f_usd, f_free, _ = _price(prices, "Frontend Instances")
+
+    # 1. reads per timeline and cost of 1 million timelines, per dataset
     rows = []
-    for f in list(range(5, 101, 5)) + [20]:
-        reads = 1 + (f + 1) * LIMIT
-        rows.append({
-            "followees_F": f,
-            "limit": LIMIT,
-            "entity_reads_per_timeline_upper_bound": reads,
-            "entity_reads_per_1M_timelines": reads * 1_000_000,
-            "usd_per_100k_reads_assumed": USD_PER_100K_READS,
-            "usd_per_1M_timelines": reads * 1_000_000 / 100_000 * USD_PER_100K_READS,
-        })
-    df = pd.DataFrame(rows).drop_duplicates("followees_F").sort_values("followees_F")
-    df.to_csv(os.path.join(out, "cost_model.csv"), index=False)
-    print(f"  -> {out}/cost_model.csv   (reads = 1 + (F+1)*limit, "
-          f"at ${USD_PER_100K_READS}/100k)")
+    for prefix, (U, P, F) in DATASETS.items():
+        reads, path = reads_per_timeline(P, F)
+        m = measured[measured["prefix"] == prefix]
+        rows.append({"dataset": prefix, "U": U, "P": P, "F": F, "authors": F + 1,
+                     "path": path, "entity_reads_per_timeline": reads,
+                     "entity_reads_measured": int(m["entities_read"].iloc[0]) if len(m) else "",
+                     "entity_reads_per_1M_timelines": reads * 1_000_000,
+                     "usd_per_read_catalogue": read_usd,
+                     "usd_per_1M_timelines": round(reads * 1_000_000 * read_usd, 2)})
+    df = pd.DataFrame(rows)
+    chk = df[df["entity_reads_measured"] != ""]
+    bad = chk[chk["entity_reads_measured"].astype(int) != chk["entity_reads_per_timeline"]]
+    if len(bad):
+        print(f"  ! reads model contradicts the measurement for {list(bad['dataset'])}",
+              file=sys.stderr)
+    df.to_csv(os.path.join(out, "cost_1M_timelines.csv"), index=False)
+    print(f"  -> {out}/cost_1M_timelines.csv   (model checked on {len(chk)} measured "
+          f"datasets, {len(bad)} mismatch)")
+
+    # 2. what the campaign consumed (Cloud Monitoring) at catalogue prices
+    def total(metric, pred=lambda k: True):
+        return sum(v for k, v in usage.get(metric, {}).items() if pred(k))
+    rd = "datastore.googleapis.com/entity/read_sizes"
+    wr = "datastore.googleapis.com/entity/write_sizes"
+    hours = defaultdict_float()
+    for k, v in usage.get("instance_hours", {}).items():
+        hours[k.split(" ")[0]] += v
+    lines = [
+        ("entity reads (lookup)", total(rd, lambda k: "ENTITY_FETCH" in k), "count", read_usd, read_free),
+        ("entity reads (query)", total(rd, lambda k: "ENTITY_SCAN" in k), "count", read_usd, read_free),
+        ("entity reads (keys-only query)", total(rd, lambda k: "KEYS_ONLY" in k), "count", read_usd, read_free),
+        ("entity writes (create)", total(wr, lambda k: "CREATE" in k), "count", write_usd, write_free),
+        ("entity deletes", total(wr, lambda k: "DELETE" in k), "count", del_usd, del_free),
+    ]
+    for v, h in sorted(hours.items()):
+        backend = v.startswith("fix")          # fixed1/2/4 and fix1 are B1
+        lines.append((f"instance-hours {v} ({'B1' if backend else 'F1'})", round(h, 2), "hour",
+                      b_usd if backend else f_usd, b_free if backend else f_free))
+    camp = pd.DataFrame(lines, columns=["item", "quantity", "unit", "usd_per_unit_catalogue",
+                                        "catalogue_free_tier_units"])
+    camp["usd_list_price_no_free_tier"] = (camp["quantity"] * camp["usd_per_unit_catalogue"]).round(4)
+    camp.to_csv(os.path.join(out, "campaign_cost.csv"), index=False)
+    print(f"  -> {out}/campaign_cost.csv   (list price, before free tier: "
+          f"{camp['usd_list_price_no_free_tier'].sum():.2f} $)")
+
+
+def defaultdict_float():
+    from collections import defaultdict
+    return defaultdict(float)
 
 
 def summary(raw, out, warmup):
@@ -372,7 +474,7 @@ def main() -> int:
     print("\nPart 3")
     fig3(p2, part2(a.raw, a.out, a.warmup, "p3"), a.out)
     print("\nExtras")
-    cost_model(a.out)
+    costs(a.raw, a.out)
     summary(a.raw, a.out, a.warmup)
     print("\ndone.")
     return 0

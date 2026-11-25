@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # PARTIE 3 — version corrigee : identique a fixed1 (1 instance, manual scaling,
 # B1) MAIS gunicorn avec 2 workers x 8 threads au lieu du defaut (1 worker
-# synchrone, 1 thread). Le chemin /api/timeline est domine par l'attente de
-# Datastore : des threads suffisent a servir plusieurs requetes en parallele.
+# synchrone, 1 thread). HYPOTHESE testee en partie 3 : des threads permettraient
+# de servir plusieurs requetes en parallele. Resultat : refutee (README, 2.3).
 #
 #   ./deploy_fix.sh
 #   URL=$(gcloud app versions describe fix1 --service default --format='value(versionUrl)')
