@@ -40,6 +40,10 @@ import pandas as pd
 LIMIT = 20
 USD_PER_100K_READS = 0.06   # check the current Datastore grid and update here
 
+# Discontinuite mesuree : la requete GQL IN cede la place au repli par auteur
+# des que la liste d'auteurs (F+1) depasse la limite IN de Datastore.
+CLIFF_F = 30
+
 COL = {1: "#1f4e79", 2: "#c1121f", 4: "#2a9d8f", 8: "#9d4edd"}
 
 
@@ -192,12 +196,27 @@ def fig1b(raw, out, warmup):
     ax.plot(f["F"], f["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=5,
             label="server time (median)")
 
+    # Deux regimes : une seule requete IN tant que F+1 <= 30, puis le repli
+    # par auteur. Ajuster une droite a travers la discontinuite n'aurait aucun
+    # sens, donc chaque regime est ajuste separement.
     ok = f.dropna(subset=["server_ms_median"])
-    if len(ok) >= 3:                      # linearity is the claim -> show the fit
-        a, b = np.polyfit(ok["F"], ok["server_ms_median"], 1)
-        xs = np.linspace(ok["F"].min(), ok["F"].max(), 50)
-        ax.plot(xs, a * xs + b, "--", color="#555", lw=1.2,
-                label=f"linear fit: {a:.2f} ms per followee")
+    lo, hi = ok[ok["F"] < CLIFF_F], ok[ok["F"] >= CLIFF_F]
+    for seg, col, lab in ((lo, "#2a9d8f", f"fit F < {CLIFF_F}"),
+                          (hi, "#555555", f"fit F >= {CLIFF_F}")):
+        if len(seg) >= 3:
+            a, b = np.polyfit(seg["F"], seg["server_ms_median"], 1)
+            xs = np.linspace(seg["F"].min(), seg["F"].max(), 50)
+            ax.plot(xs, a * xs + b, "--", color=col, lw=1.3,
+                    label=f"{lab} : {a:.2f} ms/followee")
+    if len(hi) and len(lo):
+        ax.axvline(CLIFF_F - 2.5, color="#999999", lw=1, ls=":")
+        note = chr(10).join(["limite IN de Datastore :", "F+1 > 30 auteurs",
+                             "-> repli par auteur", "(main.py:66-72)"])
+        ax.annotate(note,
+                    xy=(CLIFF_F - 2.5, ok["server_ms_median"].max() * .30),
+                    xytext=(4, ok["server_ms_median"].max() * .72),
+                    fontsize=8, color="#444444",
+                    arrowprops=dict(arrowstyle="->", color="#999999", lw=1))
     style(ax, "followees per user (F)", "time (ms)",
           "Fig. 1b — timeline cost vs F",
           "fixed1, 1 request at a time (U=120, P=20, limit=20)")
