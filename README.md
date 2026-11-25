@@ -200,8 +200,9 @@ lectures d'entités (tarif à revérifier sur la grille Datastore courante) :
 L'écart entre les deux régimes est donc d'un facteur **~100 sur la facture**, pour
 un utilisateur qui suit 100 comptes au lieu de 20.
 
-Nous n'avons pas pu relever les lectures réellement facturées (§ 5 : le compte est
-crédité et la facture affiche 0 $). **C'est la mesure elle-même qui tranche** :
+Les lectures réellement facturées ne sont pas relevables : le rapport de
+facturation ne fait apparaître **aucune ligne Datastore** (§ 5). **C'est donc la
+mesure elle-même qui tranche** :
 si le régime `IN` lisait 121 entités à F = 5 et 421 à F = 20, le temps serveur
 serait multiplié par ~3,5 entre ces deux points. Il passe de 29,1 à 31,4 ms, soit
 +8 %. Le nombre d'entités réellement matérialisées dans le régime `IN` est donc
@@ -511,47 +512,65 @@ Voir § 5.
 
 ## 5. Coût de la campagne
 
-**Montant facturé : 0 $.** Le projet est rattaché à un *Billing Account for
-Education* ; le rapport de facturation affiche 0 $ de dépense sur 30 jours, les
-crédits couvrant l'intégralité de la consommation. Deux réserves d'honnêteté : les
-données de facturation GCP ont un retard de l'ordre de 24 h, et la campagne s'est
-terminée le jour même du relevé ; et un montant net de crédits ne dit rien de la
-consommation brute.
+Relevé sur le rapport de facturation du projet `tinyinsta-b`, période
+1–25 novembre 2026, **crédits et remises exclus du coût** :
 
-Le chiffre utile n'est donc pas la facture, mais **ce que la campagne aurait coûté
-hors crédits**. Estimation à partir des volumes réellement produits :
+| Service | Coût d'usage brut | Remises | Net facturé |
+|---|---|---|---|
+| App Engine | **2,18 $** | −2,18 $ | 0,00 $ |
+| Datastore / Firestore | *aucune ligne* | — | 0,00 $ |
+| **Total** | **2,18 $** | **−2,18 $** | **0,00 $** |
 
-| Poste | Quantité | Coût estimé |
-|---|---|---|
-| Écritures (seeding) | ~610 000 entités écrites, dont ~200 000 perdues par les échecs sur `u10000` et `p1000` | ~1,10 $ |
-| Suppressions | 1 `bulk-delete` complet + purges partielles, ~250 000 entités | ~0,15 $ |
-| Lectures (54 runs, ~120 000 requêtes timeline) | ~3,3 M lectures d'entités (détail ci-dessous) | ~2,00 $ |
-| Heures d'instance `fixed1` (B1) | ~23 h × 1 instance | ~1,15 $ |
-| Heures d'instance `fixed2` / `fixed4` / `fix1` (B1) | ~0,3 h × 2 + ~0,45 h × 4 + ~0,3 h × 1 | ~0,14 $ |
-| Version par défaut (F1, autoscaling) | retombe à 0 instance hors usage (vérifié : `gcloud app instances list` → 0) | ~0 $ |
-| Stockage | ~400 000 petites entités + index composite | < 0,10 $ |
-| **Total estimé hors crédits** | | **~4,65 $** |
+**La campagne a donc consommé 2,18 $ de ressources réelles, intégralement absorbés
+par le palier gratuit d'App Engine.** Le montant net de 0 $ ne signifie pas que
+rien n'a été consommé : c'est la distinction entre *coût d'usage* et *montant
+facturé*, et elle n'apparaît qu'en décochant « inclure les crédits dans le coût ».
 
-Les ~3,3 M de lectures se répartissent très inégalement. Les ~118 000 requêtes des
-parties 2 et 3 tournent toutes à F = 20 dans le régime `IN`, donc ~21 entités
-chacune : ~2,5 M de lectures. Les runs de la partie 1 à F ≥ 30 ne totalisent que
-~400 requêtes — le service est trop lent pour en faire plus en 45 s — mais lisent
-jusqu'à 2 021 entités chacune, soit ~0,5 M de lectures à elles seules. **Autrement
-dit : 0,3 % des requêtes de la campagne consomment 15 % de ses lectures.** C'est la
-même pathologie que la falaise de la partie 1, vue depuis la facture.
+Trois observations :
 
-Deux dépenses étaient évitables et méritent d'être nommées :
+**1. Tout le coût est du temps d'instance, et il tient dans le palier gratuit.**
+Le quota gratuit d'App Engine Standard est de 28 heures-instance par jour. Notre
+pic est `fixed1` resté démarré ~23 h d'affilée, plus ~2 h cumulées pour `fixed2`,
+`fixed4` et `fix1` : on reste sous le seuil, de peu. Une seule version B1 oubliée
+24 h de plus aurait basculé la campagne en facturation réelle.
 
-- **`fixed1` est resté démarré ~23 h** entre la fin de ses mesures et son arrêt
-  effectif, par oubli : à elle seule, la plus grosse ligne du tableau (~25 % du
-  total estimé). Sur un projet facturé, ce genre d'oubli coûte plus cher que la
-  mesure elle-même.
-- **~200 000 écritures perdues** sur les jeux `u10000` et `p1000`, abandonnés après
-  des échecs de seeding dus au bridage en écriture d'une base Firestore neuve
-  (~500 écritures/s tant qu'elle n'a pas « chauffé »).
+**2. Aucune ligne Datastore n'apparaît, et c'est inattendu.** Le seeding a écrit
+~610 000 entités, bien au-delà des 20 000 écritures/jour du palier gratuit ; au
+tarif courant cela représente ~1 $. Deux explications possibles, que nous ne
+pouvons pas départager : soit l'agrégation de l'usage Firestore n'était pas encore
+remontée au moment du relevé — la campagne s'est terminée le jour même —, soit les
+écritures ont été réparties sur assez de jours (23, 24 et 25 novembre) pour rester
+sous le seuil quotidien. **Cette ligne est donc à revérifier après coup**, et c'est
+aussi pourquoi le nombre de lectures par timeline du § 2.1 est établi par la mesure
+et non par la facture.
+
+**3. Notre estimation a priori était deux fois trop haute.** Nous avions estimé
+~4,65 $ en additionnant écritures, lectures, heures d'instance et stockage. Le
+relevé donne 2,18 $. L'erreur vient entièrement du poste Datastore, que nous avions
+chiffré à ~3,25 $ et qui ressort à 0 $. C'est la même leçon que la partie 3 : un
+modèle de coût construit à partir du code se trompe tant qu'il n'est pas confronté
+à une mesure.
+
+**Volumes consommés** (comptés dans [`figures/summary.csv`](figures/summary.csv),
+indépendamment de la facturation) : ~610 000 écritures d'entités au seeding,
+~120 000 requêtes de timeline sur 54 runs, soit **~3,3 M de lectures d'entités**.
+Ces lectures se répartissent très inégalement : les ~118 000 requêtes des parties 2
+et 3 tournent à F = 20 dans le régime `IN`, donc ~21 entités chacune (~2,5 M) ;
+les ~400 requêtes de la partie 1 à F ≥ 30 lisent jusqu'à 2 021 entités chacune
+(~0,5 M). **0,3 % des requêtes de la campagne consomment 15 % de ses lectures** —
+la falaise de la partie 1, vue depuis la facture.
+
+**Dépenses évitables.** Deux, qu'il faut nommer : `fixed1` est resté démarré ~23 h
+entre la fin de ses mesures et son arrêt effectif, par simple oubli, ce qui
+représente l'essentiel des 2,18 $ et a failli faire sortir la campagne du palier
+gratuit ; et ~200 000 écritures ont été perdues sur les jeux `u10000` et `p1000`,
+abandonnés après des échecs de seeding dus au bridage en écriture d'une base
+Firestore neuve (~500 écritures/s tant qu'elle n'a pas « chauffé »).
 
 Le budget de 20 $ configuré en alerte n'a jamais été approché, ni en facturé (0 $)
-ni en estimé (~4,65 $).
+ni en brut (2,18 $). Vérification finale après la campagne :
+`gcloud app instances list` → 0 instance active, les quatre versions `fixedN` /
+`fix1` étant arrêtées.
 
 ## Annexe — Reproduire la campagne
 
