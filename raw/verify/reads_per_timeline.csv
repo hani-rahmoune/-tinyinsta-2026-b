@@ -1,0 +1,12 @@
+prefix,F,authors,path,queries_ok,queries_failed,lookups,entities_read,returned,error
+base,20,21,IN (main.py:61-64),1,0,1,21,20,
+u100,20,21,IN (main.py:61-64),1,0,1,21,20,
+u10k,20,21,IN (main.py:61-64),1,0,1,21,20,
+p10,20,21,IN (main.py:61-64),1,0,1,21,20,
+p100,20,21,IN (main.py:61-64),1,0,1,21,20,
+p1000,20,21,IN (main.py:61-64),1,0,1,21,20,
+f05,5,6,IN (main.py:61-64),1,0,1,21,20,
+f25,25,26,IN (main.py:61-64),1,0,1,21,20,
+f30,30,31,repli par auteur (main.py:66-72),31,1,1,621,20,InvalidArgument: 400 IN supports up to 30 values. There are 31 values in the IN filter in your query.
+f50,50,51,repli par auteur (main.py:66-72),51,1,1,1021,20,InvalidArgument: 400 IN supports up to 30 values. There are 51 values in the IN filter in your query.
+f100,100,101,repli par auteur (main.py:66-72),101,1,1,2021,20,InvalidArgument: 400 IN supports up to 30 values. There are 101 values in the IN filter in your query.

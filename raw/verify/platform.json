@@ -1,0 +1,10 @@
+{
+ "app": "europe-west\tSERVING",
+ "database": "eur3\tDATASTORE_MODE\t2026-11-23T22:12:22.682855Z",
+ "indexes": "Post\t{'direction': 'ASCENDING', 'name': 'author'},{'direction': 'DESCENDING', 'name': 'created'}\tREADY",
+ "versions": "20261123t221838\t0.00\t2026-11-23 22:19:26+00:00\t\n20261123t222612\t1.00\t2026-11-23 22:26:47+00:00\t\nfix1\t0.00\t2026-11-25 13:50:54+00:00\t\nfixed1\t0.00\t2026-11-24 13:52:40+00:00\t\nfixed2\t0.00\t2026-11-25 13:04:22+00:00\t\nfixed4\t0.00\t2026-11-25 13:32:44+00:00",
+ "billing_account": "billingAccounts/0178E0-CD9CF8-E041E9\tTrue",
+ "locust": "locust 2.47.0 from /home/epictetoo73/.local/lib/python3.12/site-packages/locust (Python 3.12.3)",
+ "python": "Python 3.12.3",
+ "budgets": "tiny-budget\t20\tUSD"
+}

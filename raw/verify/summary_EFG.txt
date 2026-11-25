@@ -1,0 +1,994 @@
+projet tinyinsta-b   relevé 2026-11-25T15:05:56Z
+
+==============================================================================
+E. Journaux de requêtes App Engine : attente AVANT l'instance (pendingTime)
+==============================================================================
+run            version requêtes instances latence méd. (ms) pendingTime méd. (ms) avec pending
+p2_n1_c1       fixed1      1455         1              35.1                  29.3           45
+p2_n1_c16      fixed1      1550         1             656.3                 612.4         1550
+p2_n1_c2       fixed1      1654         1              68.1                  26.2         1595
+p2_n1_c32      fixed1      1541         1            1416.6                1368.9         1541
+p2_n1_c4       fixed1      1644         1             150.5                 107.3         1629
+p2_n1_c64      fixed1      1311         1            3101.1                3053.2         1311
+p2_n1_c8       fixed1      1611         1             319.1                 276.2         1608
+p2_n2_c1       fixed2      1602         2              33.5                  None            0
+p2_n2_c16      fixed2      2000         2             283.8                 245.4         1591
+p2_n2_c2       fixed2      2000         2              40.7                  25.1          110
+p2_n2_c32      fixed2      2000         2             532.2                 473.7         1995
+p2_n2_c4       fixed2      2000         2              69.5                  55.0          836
+p2_n2_c64      fixed2      2000         2            1049.7                1006.5         1999
+p2_n2_c8       fixed2      2000         2             154.5                 227.7         1011
+p2_n4_c1       fixed4      1640         4              31.8                  None            0
+p2_n4_c16      fixed4      2000         4             125.9                 138.9         1385
+p2_n4_c2       fixed4      2000         4              33.3                  None            0
+p2_n4_c32      fixed4      2000         4             383.7                 332.7         1986
+p2_n4_c4       fixed4      2000         4              40.4                  28.5          176
+p2_n4_c64      fixed4      2000         4             562.7                 509.2         1998
+p2_n4_c8       fixed4      2000         4              69.7                 107.9          763
+p3_n1_c1       fix1        1594         1              33.6                  25.2           47
+p3_n1_c16      fix1        1623         1             640.9                 596.8         1622
+p3_n1_c2       fix1        1819         1              66.1                  24.5         1804
+p3_n1_c32      fix1        1698         1            1308.9                1266.2         1698
+p3_n1_c4       fix1        1743         1             144.6                 103.4         1717
+p3_n1_c64      fix1        1616         1            2537.0                2493.7         1616
+p3_n1_c8       fix1        1682         1             310.6                 269.1         1680
+
+==============================================================================
+F. Consommation mesurée (Cloud Monitoring), par jour UTC
+==============================================================================
+-- datastore.googleapis.com/entity/read_sizes  (total 2,701,941)
+   2026-11-24  type=ENTITY_FETCH                              22,811
+   2026-11-24  type=ENTITY_SCAN                            1,150,967
+   2026-11-24  type=KEYS_ONLY                                 50,601
+   2026-11-25  type=ENTITY_FETCH                              70,196
+   2026-11-25  type=ENTITY_SCAN                            1,407,366
+-- datastore.googleapis.com/entity/write_sizes  (total 649,991)
+   2026-11-24  op=CREATE                                     610,392
+   2026-11-24  op=DELETE                                      39,599
+-- datastore.googleapis.com/api/request_count  (total 222,993)
+   2026-11-24  api_method=Commit                               1,343
+   2026-11-24  api_method=Lookup                              22,810
+   2026-11-24  api_method=Query                               58,267
+   2026-11-25  api_method=Lookup                              70,200
+   2026-11-25  api_method=Query                               70,373
+-- firestore.googleapis.com/document/read_count  (total 0)
+-- firestore.googleapis.com/document/write_count  (total 0)
+-- firestore.googleapis.com/document/delete_count  (total 0)
+-- appengine.googleapis.com/system/instance_count -> heures d'instance
+   20261123t222612                   0.00 h
+   20261123t222612    active         0.00 h
+   20261123t222612    idle           0.25 h
+   20261123t222612    lameduck       0.00 h
+   20261123t222612    loading        0.00 h
+   fix1                              0.00 h
+   fix1               active         0.15 h
+   fix1               idle           0.12 h
+   fix1               lameduck       0.00 h
+   fix1               loading        0.00 h
+   fixed1                            0.00 h
+   fixed1             active         0.45 h
+   fixed1             idle          22.73 h
+   fixed1             lameduck       0.00 h
+   fixed1             loading        0.02 h
+   fixed2                            0.00 h
+   fixed2             active         0.25 h
+   fixed2             idle           0.33 h
+   fixed2             lameduck       0.00 h
+   fixed2             loading        0.02 h
+   fixed4                            0.00 h
+   fixed4             active         0.42 h
+   fixed4             idle           1.47 h
+   fixed4             lameduck       0.00 h
+   fixed4             loading        0.00 h
+
+==============================================================================
+G. Grille tarifaire officielle (Cloud Billing Catalog API)
+==============================================================================
+(base : eur3 ; App Engine : europe-west1)
+Cloud Firestore Cloud Firestore Entity Writes Europe 3 (with free tier)        [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Taiwan                           [count]  dès 0 : 1.042e-06 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Dammam          [count]  dès 0 : 0 $  |  dès 20000 : 1.44e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Frankfurt                          [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Las Vegas                        [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Finland                               [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Enterprise Read Units Europe 3 (with free tier [count]  dès 0 : 0 $  |  dès 50000 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Phoenix         [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units Europe 3       [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Sao Paulo                          [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops Salt Lake City (with free tier)       [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Salt Lake City                   [count]  dès 0 : 1.08e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Dammam                             [count]  dès 0 : 1.6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Santiago                         [count]  dès 0 : 1.29e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Oregon (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Melbourne (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Santiago                        [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Sao Paulo                        [count]  dès 0 : 1.35e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Montreal (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Sydney (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units North America  [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Berlin            [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Dallas                           [count]  dès 0 : 1.06e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Finland                            [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Singapore (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 3.69e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Stockholm                          [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Paris                                 [count]  dès 0 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes North America 5                  [count]  dès 0 : 1.8e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Columbus          [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Johannesburg      [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Salt Lake City                  [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Doha (with free tier)              [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Las Vegas (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Seoul                                 [count]  dès 0 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Jakarta (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Dallas                          [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Oregon                           [count]  dès 0 : 9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes London                           [count]  dès 0 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Finland                         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Belgium                         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Columbus                           [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Melbourne (with free tier)         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes London (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Toronto (with free tier)        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Netherlands (with free tier)          [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Finland         [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Madrid            [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes North America 5 (with free tier [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Singapore (with free tier)         [count]  dès 0 : 1.23e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Northern Virginia (with free tie [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Turin                                 [count]  dès 0 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Columbus                              [count]  dès 0 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Jakarta                         [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Europe 3 (with free tier)             [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Madrid          [count]  dès 0 : 0 $  |  dès 20000 : 1.06e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Finland           [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Tokyo                                 [count]  dès 0 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops Oregon                                [count]  dès 0 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes South Carolina (with free tier) [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Madrid         [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Warsaw (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Nam7 (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Frankfurt (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Taiwan (with free tier)            [count]  dès 0 : 1.15e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Los Angeles                      [count]  dès 0 : 1.08e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Tokyo                           [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Paris (with free tier)             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Netherlands                           [count]  dès 0 : 3.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Belgium         [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Doha (with free tier)            [count]  dès 0 : 0 $  |  dès 20000 : 1.09e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Paris                              [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Belgium                               [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Sydney                             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Warsaw (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Toronto                               [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Sydney                          [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Turin                           [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Nam7                               [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes London (with free tier)            [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Phoenix        [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Stockholm      [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Las Vegas                       [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Dallas            [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Mumbai (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Dammam            [count]  dès 0 : 1.6e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Finland        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Tokyo (with free tier)                [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops Santiago                              [count]  dès 0 : 4.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Oregon                             [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes London                             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Northern Virginia (with free tier)    [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Stockholm                             [count]  dès 0 : 3.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops North America 5                       [count]  dès 0 : 6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Seoul (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Los Angeles (with free tier)    [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Stockholm            [count]  dès 0 : 0 $  |  dès 50000 : 3.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Madrid                          [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Seoul (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Tokyo (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Las Vegas (with free tier)         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Sydney (with free tier)            [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Oregon (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Zurich (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.4e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Montreal (with free tier)          [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Seoul (with free tier)             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Tokyo                              [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Montreal                           [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Dammam                                [count]  dès 0 : 4.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops Montreal (with free tier)             [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Northern Virginia                     [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Nam7                             [count]  dès 0 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Turin                [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Taiwan (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.042e-06 $
+Cloud Firestore Cloud Firestore Read Ops Doha (with free tier)                 [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Enterprise Read Units North America 7          [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Stockholm                        [count]  dès 0 : 9.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops Warsaw                                [count]  dès 0 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Tel Aviv (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Las Vegas                          [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Dallas         [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units North America  [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Mumbai                          [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Salt Lake City (with free tier) [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Berlin                             [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Belgium           [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Singapore                          [count]  dès 0 : 1.23e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Columbus             [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Hong Kong (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Tel Aviv (with free tier)          [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Warsaw (with free tier)            [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes North America 5                    [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Delhi (with free tier)                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Madrid                           [count]  dès 0 : 1.06e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes North America 5                 [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Jakarta (with free tier)              [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Belgium              [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Jakarta (with free tier)        [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Delhi                            [count]  dès 0 : 1.04e-06 $
+Cloud Firestore Cloud Firestore Entity Writes South Carolina                   [count]  dès 0 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Read Ops Zurich                                [count]  dès 0 : 4.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Sao Paulo (with free tier)         [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Finland              [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Osaka                              [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Hong Kong                             [count]  dès 0 : 6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Iowa                               [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Europe 3                              [count]  dès 0 : 6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Salt Lake City                     [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Toronto (with free tier)           [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Berlin          [count]  dès 0 : 0 $  |  dès 20000 : 1.39e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Sao Paulo (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.35e-06 $
+Cloud Firestore Cloud Firestore Read Ops Madrid                                [count]  dès 0 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Iowa            [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units Europe 3 (with [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units North America  [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Northern Virginia (with free tier) [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Montreal                              [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Mumbai                             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Berlin         [count]  dès 0 : 0 $  |  dès 20000 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops Osaka                                 [count]  dès 0 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops Mumbai                                [count]  dès 0 : 3.5e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Tokyo (with free tier)             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Madrid               [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Dammam                          [count]  dès 0 : 1.6e-07 $
+Cloud Firestore Cloud Firestore Read Ops Iowa                                  [count]  dès 0 : 3e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Santiago             [count]  dès 0 : 0 $  |  dès 50000 : 4.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Dammam               [count]  dès 0 : 0 $  |  dès 50000 : 4.8e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Warsaw                           [count]  dès 0 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Read Ops Toronto (with free tier)              [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Sao Paulo                       [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops Johannesburg                          [count]  dès 0 : 3.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Netherlands (with free tier)     [count]  dès 0 : 0 $  |  dès 20000 : 1.02e-06 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Stockholm       [count]  dès 0 : 0 $  |  dès 20000 : 9.5e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Johannesburg   [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Hong Kong (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes South Carolina (with free tier)  [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Milan                            [count]  dès 0 : 1.04e-06 $
+Cloud Firestore Cloud Firestore Enterprise Read Units Europe 3                 [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units Belgium        [count]  dès 0 : 2.86e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Singapore                       [count]  dès 0 : 1.23e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Los Angeles (with free tier)       [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Phoenix                            [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Read Ops London (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units Belgium (with  [count]  dès 0 : 2.86e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Netherlands (with free tier)       [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Enterprise Read Units Belgium                  [count]  dès 0 : 5.5e-08 $
+Cloud Firestore Cloud Firestore TTL Deletes Melbourne                          [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Mumbai                           [count]  dès 0 : 1.04e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Hong Kong (with free tier)         [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Zurich                          [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Tel Aviv (with free tier)        [count]  dès 0 : 0 $  |  dès 20000 : 1.02e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Los Angeles                     [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units North America 7         [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes South Carolina (with free tier)    [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Hong Kong                          [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Doha                                  [count]  dès 0 : 3.6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Warsaw                             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Tel Aviv                        [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Dallas          [count]  dès 0 : 0 $  |  dès 20000 : 1.06e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Nam7 (with free tier)              [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Europe 3 (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Doha                            [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Columbus                        [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Delhi (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Zurich (with free tier)            [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Turin          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Dallas                             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Oregon (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Los Angeles                           [count]  dès 0 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Netherlands (with free tier)    [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Europe 3                         [count]  dès 0 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Osaka (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Doha                             [count]  dès 0 : 1.09e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Johannesburg                    [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Toronto                            [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Jakarta                               [count]  dès 0 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops South Carolina                        [count]  dès 0 : 6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Turin                            [count]  dès 0 : 1.16e-06 $
+Cloud Firestore Cloud Firestore Read Ops North America 5 (with free tier)      [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Johannesburg                       [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Warsaw                          [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Phoenix           [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Sydney                                [count]  dès 0 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Read Ops Zurich (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 4.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Taiwan                             [count]  dès 0 : 1.15e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Iowa              [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Osaka (with free tier)             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Finland                          [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units North America 5 (with f [count]  dès 0 : 0 $  |  dès 40000 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Los Angeles (with free tier)          [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Read Ops Nam7 (with free tier)                 [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Sydney (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Read Ops Seoul (with free tier)                [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Jakarta                            [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Europe 3 (with free tier)          [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Johannesburg    [count]  dès 0 : 0 $  |  dès 20000 : 9.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Berlin                           [count]  dès 0 : 1.39e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Los Angeles                        [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units Belgium (with free tier [count]  dès 0 : 0 $  |  dès 40000 : 2.86e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Belgium        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Columbus       [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Turin           [count]  dès 0 : 0 $  |  dès 20000 : 1.16e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Osaka (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Frankfurt                        [count]  dès 0 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Paris (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.07e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Toronto                         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes nam7 (with free tier)            [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Enterprise Write Units Europe 3                [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Warsaw (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Iowa           [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Jakarta (with free tier)           [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Montreal                         [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Toronto                          [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Columbus        [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Singapore (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.107e-06 $
+Cloud Firestore Cloud Firestore Read Ops Frankfurt                             [count]  dès 0 : 3.9e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Santiago                           [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Read Ops Taiwan (with free tier)               [count]  dès 0 : 0 $  |  dès 50000 : 3.45e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Delhi                           [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Dammam         [count]  dès 0 : 0 $  |  dès 20000 : 1.6e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Toronto (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops Taiwan                                [count]  dès 0 : 3.45e-07 $
+Cloud Firestore Cloud Firestore Read Ops Singapore                             [count]  dès 0 : 3.69e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes London (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Frankfurt (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Northern Virginia                  [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Netherlands                     [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Turin             [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Mumbai (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Johannesburg                     [count]  dès 0 : 9.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Netherlands                      [count]  dès 0 : 1.02e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Northern Virginia               [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Las Vegas                             [count]  dès 0 : 3.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Tel Aviv (with free tier)             [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Delhi                              [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Tel Aviv                           [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Paris (with free tier)                [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Read Ops Berlin                                [count]  dès 0 : 4.6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Stockholm         [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Enterprise Read Units North America 7 (with fr [count]  dès 0 : 0 $  |  dès 50000 : 1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Sao Paulo (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 4.5e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Iowa                            [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Seoul                           [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Sao Paulo (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Doha (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Salt Lake City (with free tier)  [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Taiwan (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Doha                               [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Seoul                            [count]  dès 0 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Iowa                             [count]  dès 0 : 9e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Paris (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Jakarta                          [count]  dès 0 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Read Ops Delhi                                 [count]  dès 0 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Melbourne (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.03e-06 $
+Cloud Firestore Cloud Firestore Enterprise Read Units North America 5          [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Milan           [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Frankfurt (with free tier)         [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units Europe 3 (with free tie [count]  dès 0 : 0 $  |  dès 40000 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Dallas               [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Milan                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units North America 7 (with f [count]  dès 0 : 0 $  |  dès 40000 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Europe 3                        [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Milan                              [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Montreal                        [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Las Vegas (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Taiwan                          [count]  dès 0 : 1.15e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Santiago          [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Salt Lake City (with free tier)    [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Read Ops Osaka (with free tier)                [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Montreal (with free tier)        [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Seoul                              [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes South Carolina                     [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Berlin               [count]  dès 0 : 0 $  |  dès 50000 : 4.6e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Turin                              [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Oregon                          [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes North America 5 (with free tier)   [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Madrid                             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Frankfurt                       [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops Sao Paulo                             [count]  dès 0 : 4.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Zurich                           [count]  dès 0 : 1.26e-06 $
+Cloud Firestore Cloud Firestore Enterprise Write Units Belgium                 [count]  dès 0 : 2.86e-07 $
+Cloud Firestore Cloud Firestore Enterprise Managed Delete Units North America  [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Melbourne                       [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Stockholm                       [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Netherlands                        [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Hong Kong                       [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Osaka                           [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Mumbai (with free tier)            [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Nam7                            [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Zurich (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.26e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Northern Virginia                [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Columbus                         [count]  dès 0 : 9e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Singapore (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 1.23e-07 $
+Cloud Firestore Cloud Firestore Enterprise Write Units North America 5         [count]  dès 0 : 5.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Paris                           [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Santiago       [count]  dès 0 : 0 $  |  dès 20000 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Enterprise Read Units Belgium (with free tier) [count]  dès 0 : 0 $  |  dès 50000 : 5.5e-08 $
+Cloud Firestore Cloud Firestore Read Ops Salt Lake City                        [count]  dès 0 : 3.6e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes London                          [count]  dès 0 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Paris                            [count]  dès 0 : 1.07e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes (with free tier) Milan             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Melbourne                        [count]  dès 0 : 1.03e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Oregon (with free tier)            [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes (with free tier) Milan          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Tokyo (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Singapore                        [count]  dès 0 : 1.107e-06 $
+Cloud Firestore Cloud Firestore Read Ops Dallas                                [count]  dès 0 : 3.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Sydney                           [count]  dès 0 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Mumbai (with free tier)          [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Delhi (with free tier)           [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+Cloud Firestore Cloud Firestore Read Ops Melbourne                             [count]  dès 0 : 3.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Hong Kong (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+Cloud Firestore Cloud Firestore TTL Deletes Europe 3                           [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Belgium                          [count]  dès 0 : 9.9e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Los Angeles (with free tier)     [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+Cloud Firestore Cloud Firestore Read Ops Nam7                                  [count]  dès 0 : 6e-07 $
+Cloud Firestore Cloud Firestore Read Ops South Carolina (with free tier)       [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Sydney (with free tier)         [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Iowa                 [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes North America 5 (with free tier) [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Enterprise Read Units North America 5 (with fr [count]  dès 0 : 0 $  |  dès 50000 : 1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Hong Kong                        [count]  dès 0 : 1.8e-06 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Phoenix              [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes South Carolina                  [count]  dès 0 : 2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Phoenix                         [count]  dès 0 : 1e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Delhi (with free tier)             [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Osaka                            [count]  dès 0 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Read Ops Las Vegas (with free tier)            [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Zurich                             [count]  dès 0 : 1.4e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Dammam                           [count]  dès 0 : 1.44e-06 $
+Cloud Firestore Cloud Firestore Read Ops London                                [count]  dès 0 : 3.9e-07 $
+Cloud Firestore Cloud Firestore Read Ops (with free tier) Johannesburg         [count]  dès 0 : 0 $  |  dès 50000 : 3.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Phoenix                               [count]  dès 0 : 3e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Phoenix                          [count]  dès 0 : 9e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Milan                           [count]  dès 0 : 1.2e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Northern Virginia (with free ti [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Read Ops Tel Aviv                              [count]  dès 0 : 3.4e-07 $
+Cloud Firestore Cloud Firestore TTL Deletes Belgium                            [count]  dès 0 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Deletes Berlin                          [count]  dès 0 : 1.5e-07 $
+Cloud Firestore Cloud Firestore Entity Writes (with free tier) Santiago        [count]  dès 0 : 0 $  |  dès 20000 : 1.29e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Tokyo                            [count]  dès 0 : 1.15e-06 $
+Cloud Firestore Cloud Firestore Entity Deletes Melbourne (with free tier)      [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+Cloud Firestore Cloud Firestore Entity Writes Tel Aviv                         [count]  dès 0 : 1.02e-06 $
+Cloud Firestore Cloud Firestore Entity Writes Frankfurt (with free tier)       [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+Cloud Firestore Cloud Firestore Read Ops Milan                                 [count]  dès 0 : 3.5e-07 $
+App Engine      Cloud Datastore Read Ops                                       [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+App Engine      Cloud Firestore Entity Writes Japan (named databases)          [count]  dès 0 : 1.15e-06 $
+App Engine      Cloud Firestore Entity Writes Santiago                         [count]  dès 0 : 0 $  |  dès 20000 : 1.29e-06 $
+App Engine      Cloud Firestore Entity Writes (named databases) Milan          [count]  dès 0 : 1.04e-06 $
+App Engine      Cloud Firestore Read Ops Japan                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Flex Instance Core Hours Zurich                                [hour]  dès 0 : 0.068 $
+App Engine      Backend Instances Oregon                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.05 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Columbus         [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Writes Jakarta                          [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Datastore Entity Deletes Zurich                          [count]  dès 0 : 0 $  |  dès 20000 : 1.4e-07 $
+App Engine      Flex Instance Core Hours London                                [hour]  dès 0 : 0.063 $
+App Engine      Cloud Datastore Entity Writes Seoul                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Flex Instance Core Hours Mumbai                                [hour]  dès 0 : 0.06 $
+App Engine      Cloud Firestore Entity Writes (named databases) Belgium        [count]  dès 0 : 9.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Finland                         [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Flex Instance RAM Northern Virginia                            [gibibyte hour]  dès 0 : 0.008 $
+App Engine      Cloud Firestore Read Ops Netherlands (named databases)         [count]  dès 0 : 3.4e-07 $
+App Engine      Cloud Firestore TTL Deletes Oregon (named databases)           [count]  dès 0 : 1e-07 $
+App Engine      Log Read Bandwidth Warsaw                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.144 $
+App Engine      Cloud Firestore Entity Deletes europe-west5 Frankfurt (named d [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Netherlands (named databases)   [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Datastore Read Ops Singapore                             [count]  dès 0 : 0 $  |  dès 50000 : 3.69e-07 $
+App Engine      Cloud Firestore Read Ops Melbourne                             [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+App Engine      Cloud Datastore Entity Deletes Taiwan                          [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-07 $
+App Engine      Cloud Firestore Read Ops Montreal (named databases)            [count]  dès 0 : 3.3e-07 $
+App Engine      Flex Instance RAM Taiwan                                       [gibibyte hour]  dès 0 : 0.00822109 $
+App Engine      Cloud Firestore Entity Writes Hong Kong (named databases)      [count]  dès 0 : 1.8e-06 $
+App Engine      Cloud Datastore Entity Writes Northern Virginia                [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Datastore Read Ops Toronto                               [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Mumbai                          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Las Vegas (named databases)      [count]  dès 0 : 9.9e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Santiago            [count]  dès 0 : 4.3e-07 $
+App Engine      Flex Instance RAM Singapore                                    [gibibyte hour]  dès 0 : 0.00875927 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Finland          [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Datastore Entity Deletes Sao Paulo                       [count]  dès 0 : 0 $  |  dès 20000 : 1.5e-07 $
+App Engine      Frontend Instances Oregon                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.05 $
+App Engine      Cloud Firestore Read Ops Dammam                                [count]  dès 0 : 0 $  |  dès 50000 : 4.8e-07 $
+App Engine      Flex Instance RAM London                                       [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Firestore Entity Writes Sao Paulo                        [count]  dès 0 : 0 $  |  dès 20000 : 1.35e-06 $
+App Engine      Cloud Firestore Entity Writes Johannesburg                     [count]  dès 0 : 0 $  |  dès 20000 : 9.4e-07 $
+App Engine      Cloud Firestore Read Ops Tel Aviv (named databases)            [count]  dès 0 : 3.4e-07 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Iowa             [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Writes Tel Aviv (named databases)       [count]  dès 0 : 1.02e-06 $
+App Engine      Cloud Firestore TTL Deletes Warsaw (named databases)           [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes London                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Frontend Instances Montreal                                    [hour]  dès 0 : 0 $  |  dès 28 : 0.053 $
+App Engine      Cloud Datastore Entity Writes                                  [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+App Engine      Cloud Datastore Entity Deletes Montreal                        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Berlin              [count]  dès 0 : 4.6e-07 $
+App Engine      Cloud Firestore Read Ops Milan                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore Entity Writes North America 7                  [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+App Engine      External IP Charge on a Flex Instance                          [hour]  dès 0 : 0 $  |  dès 721 : 0.004 $
+App Engine      Cloud Firestore Read Ops (named databases)                     [count]  dès 0 : 6e-07 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Turin            [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Writes Taiwan                           [count]  dès 0 : 0 $  |  dès 20000 : 1.042e-06 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Dammam           [count]  dès 0 : 1.6e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Phoenix       [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Read Ops Melbourne (named databases)           [count]  dès 0 : 3.4e-07 $
+App Engine      Cloud Firestore Entity Deletes Las Vegas (named databases)     [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Writes Columbus                         [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Dallas         [count]  dès 0 : 1.06e-06 $
+App Engine      Cloud Firestore Read Ops Singapore                             [count]  dès 0 : 0 $  |  dès 50000 : 3.69e-07 $
+App Engine      Cloud Firestore Entity Deletes Madrid                          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Flex Instance Core Hours Jakarta                               [hour]  dès 0 : 0.0697 $
+App Engine      Cloud Firestore TTL Deletes Doha                               [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Deletes Montreal (named databases)      [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Datastore Read Ops Seoul                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Cloud Datastore Read Ops Salt Lake City                        [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Backend Instances London                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.06 $
+App Engine      Cloud Firestore TTL Deletes Osaka                              [count]  dès 0 : 1.3e-07 $
+App Engine      Log Read Bandwidth Jakarta                                     [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.156 $
+App Engine      Cloud Firestore Entity Writes Sydney (named databases)         [count]  dès 0 : 1.15e-06 $
+App Engine      Cloud Firestore Read Ops (named databases) Turin               [count]  dès 0 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Turin                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Turin                            [count]  dès 0 : 0 $  |  dès 20000 : 1.16e-06 $
+App Engine      Backend Instances Jakarta                                      [hour]  dès 0 : 0 $  |  dès 9 : 0.0681 $
+App Engine      Flex Instance RAM Frankfurt                                    [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Firestore Entity Writes Dallas                           [count]  dès 0 : 0 $  |  dès 20000 : 1.06e-06 $
+App Engine      Cloud Datastore Entity Writes Singapore                        [count]  dès 0 : 0 $  |  dès 20000 : 1.107e-06 $
+App Engine      Cloud Firestore Read Ops Taiwan                                [count]  dès 0 : 0 $  |  dès 50000 : 3.45e-07 $
+App Engine      Cloud Firestore Entity Writes Melbourne (named databases)      [count]  dès 0 : 1.03e-06 $
+App Engine      Frontend Instances Sao Paulo                                   [hour]  dès 0 : 0 $  |  dès 28 : 0.075 $
+App Engine      Log Read Bandwidth Japan                                       [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.156 $
+App Engine      Cloud Firestore Read Ops London (named databases)              [count]  dès 0 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Northern Virginia               [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Datastore Read Ops Delhi                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Flex Instance Core Hours Los Angeles                           [hour]  dès 0 : 0.063 $
+App Engine      Backend Instances Hong Kong                                    [hour]  dès 0 : 0 $  |  dès 9 : 0.063 $
+App Engine      Cloud Firestore TTL Deletes Turin                              [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Melbourne (named databases)     [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Jakarta (named databases)       [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Warsaw                             [count]  dès 0 : 1.3e-07 $
+App Engine      Frontend Instances Jakarta                                     [hour]  dès 0 : 0 $  |  dès 28 : 0.0681 $
+App Engine      Cloud Datastore Read Ops Warsaw                                [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Read Ops Frankfurt                             [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Flex Instance Core Hours Hong Kong                             [hour]  dès 0 : 0.066 $
+App Engine      Log Read Bandwidth London                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.144 $
+App Engine      Flex Instance RAM EMEA                                         [gibibyte hour]  dès 0 : 0.0078 $
+App Engine      Backend Instances Sydney                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.068 $
+App Engine      Cloud Firestore Entity Writes Frankfurt (named databases)      [count]  dès 0 : 1.17e-06 $
+App Engine      Flex Instance Core Hours Warsaw                                [hour]  dès 0 : 0.063 $
+App Engine      Cloud Firestore TTL Deletes Tel Aviv (named databases)         [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Johannesburg                    [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Las Vegas                       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Delhi                              [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops Jakarta (named databases)             [count]  dès 0 : 3.8e-07 $
+App Engine      Cloud Datastore Entity Writes Zurich                           [count]  dès 0 : 0 $  |  dès 20000 : 1.26e-06 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Johannesburg     [count]  dès 0 : 1e-07 $
+App Engine      Log Read Bandwidth Seoul                                       [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.156 $
+App Engine      Cloud Firestore Entity Writes Netherlands                      [count]  dès 0 : 0 $  |  dès 20000 : 1.02e-06 $
+App Engine      Cloud Firestore TTL Deletes Mumbai (named databases)           [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Datastore Entity Deletes Singapore                       [count]  dès 0 : 0 $  |  dès 20000 : 1.23e-07 $
+App Engine      Cloud Firestore Entity Deletes Delhi (named databases)         [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Santiago      [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Firestore Entity Deletes Japan (named databases)         [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Warsaw                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Frontend Instances Mumbai                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.058 $
+App Engine      Cloud Datastore Entity Writes Toronto                          [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Flex Instance RAM                                              [gibibyte hour]  dès 0 : 0.0071 $
+App Engine      Cloud Firestore TTL Deletes Iowa                               [count]  dès 0 : 1e-07 $
+App Engine      Cloud Datastore Read Ops Sao Paulo                             [count]  dès 0 : 0 $  |  dès 50000 : 4.5e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Belgium       [count]  dès 0 : 1.1e-07 $
+App Engine      Flex Instance RAM Las Vegas                                    [gibibyte hour]  dès 0 : 0.008 $
+App Engine      Cloud Firestore Entity Writes (named databases) Dammam         [count]  dès 0 : 1.44e-06 $
+App Engine      Cloud Firestore Entity Writes Dammam                           [count]  dès 0 : 0 $  |  dès 20000 : 1.44e-06 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Dammam        [count]  dès 0 : 1.6e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Johannesburg        [count]  dès 0 : 3.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Sydney                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Datastore Read Ops London                                [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Read Ops Turin                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Columbus                        [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Iowa                [count]  dès 0 : 3e-07 $
+App Engine      Cloud Firestore Entity Writes Doha                             [count]  dès 0 : 0 $  |  dès 20000 : 1.09e-06 $
+App Engine      Cloud Datastore Entity Writes Osaka                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Datastore Entity Deletes                                 [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+App Engine      Cloud Firestore Read Ops Northern Virginia                     [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Hong Kong                       [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+App Engine      Cloud Firestore Entity Writes Osaka (named databases)          [count]  dès 0 : 1.15e-06 $
+App Engine      Cloud Firestore Entity Deletes Iowa                            [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Cloud Datastore Entity Deletes Sydney                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes North America 7                 [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+App Engine      Cloud Datastore Read Ops Sydney                                [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Backend Instances Los Angeles                                  [hour]  dès 0 : 0 $  |  dès 9 : 0.06 $
+App Engine      Cloud Firestore TTL Deletes Johannesburg                       [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Milan         [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Datastore Entity Deletes Northern Virginia               [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Writes Milan                            [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+App Engine      Cloud Datastore Entity Writes Hong Kong                        [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+App Engine      Cloud Firestore Read Ops Taiwan (named databases)              [count]  dès 0 : 3.45e-07 $
+App Engine      Cloud Firestore Read Ops Osaka (named databases)               [count]  dès 0 : 3.8e-07 $
+App Engine      Cloud Firestore Entity Writes Seoul                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore TTL Deletes Singapore                          [count]  dès 0 : 1.23e-07 $
+App Engine      Cloud Firestore Entity Deletes Hong Kong (named databases)     [count]  dès 0 : 2e-07 $
+App Engine      Cloud Datastore Entity Deletes Osaka                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Delhi                           [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Deletes Salt Lake City (named databases [count]  dès 0 : 1.2e-07 $
+App Engine      Flex Instance RAM Warsaw                                       [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Firestore Entity Deletes Oregon                          [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Flex Instance RAM Jakarta                                      [gibibyte hour]  dès 0 : 0.0093 $
+App Engine      Flex Instance RAM Montreal                                     [gibibyte hour]  dès 0 : 0.008 $
+App Engine      Cloud Datastore Read Ops Frankfurt                             [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Read Ops Paris                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Cloud Firestore Read Ops North America 7                       [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+App Engine      Cloud Firestore Read Ops Singapore (named databases)           [count]  dès 0 : 3.69e-07 $
+App Engine      Backend Instances Frankfurt                                    [hour]  dès 0 : 0 $  |  dès 9 : 0.06 $
+App Engine      Cloud Firestore Entity Deletes Seoul                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Columbus       [count]  dès 0 : 9e-07 $
+App Engine      Cloud Firestore Entity Deletes Mumbai (named databases)        [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Datastore Entity Writes Salt Lake City                   [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+App Engine      Cloud Firestore Entity Writes London                           [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Firestore TTL Deletes                                    [count]  dès 0 : 2e-07 $
+App Engine      Cloud Firestore TTL Deletes Montreal (named databases)         [count]  dès 0 : 1.1e-07 $
+App Engine      Backend Instances Taiwan                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.057895 $
+App Engine      Cloud Firestore Entity Writes                                  [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+App Engine      Cloud Firestore Entity Writes Netherlands (named databases)    [count]  dès 0 : 1.02e-06 $
+App Engine      Cloud Firestore Entity Writes Taiwan                           [count]  dès 0 : 0 $  |  dès 20000 : 1.042e-06 $
+App Engine      Cloud Firestore Entity Deletes Los Angeles                     [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore TTL Deletes Berlin                             [count]  dès 0 : 1.5e-07 $
+App Engine      Flex Instance RAM Salt Lake City                               [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Flex Instance RAM Mumbai                                       [gibibyte hour]  dès 0 : 0.008 $
+App Engine      Cloud Firestore Read Ops Hong Kong                             [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+App Engine      Frontend Instances Zurich                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.065 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Turin         [count]  dès 0 : 1.3e-07 $
+App Engine      Frontend Instances Seoul                                       [hour]  dès 0 : 0 $  |  dès 28 : 0.065 $
+App Engine      Cloud Datastore Read Ops Montreal                              [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Zurich (named databases)           [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Datastore Entity Deletes Salt Lake City                  [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Dallas              [count]  dès 0 : 3.5e-07 $
+App Engine      Cloud Firestore Read Ops Sydney (named databases)              [count]  dès 0 : 3.8e-07 $
+App Engine      Cloud Firestore Read Ops Finland                               [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Log Read Bandwidth Las Vegas                                   [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.132 $
+App Engine      Flex Instance Core Hours Frankfurt                             [hour]  dès 0 : 0.063 $
+App Engine      Log Read Bandwidth Salt Lake City                              [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.144 $
+App Engine      Cloud Firestore Entity Writes Montreal (named databases)       [count]  dès 0 : 9.9e-07 $
+App Engine      Flex Instance RAM Seoul                                        [gibibyte hour]  dès 0 : 0.0089 $
+App Engine      Cloud Firestore TTL Deletes Las Vegas (named databases)        [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Los Angeles                        [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Datastore Entity Deletes Hong Kong                       [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+App Engine      Cloud Datastore Read Ops Japan                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Cloud Firestore Read Ops Dallas                                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore TTL Deletes Columbus                           [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases)               [count]  dès 0 : 2e-07 $
+App Engine      Cloud Firestore Entity Writes Singapore (named databases)      [count]  dès 0 : 1.107e-06 $
+App Engine      Cloud Firestore Entity Writes Singapore                        [count]  dès 0 : 0 $  |  dès 20000 : 1.107e-06 $
+App Engine      Backend Instances Las Vegas                                    [hour]  dès 0 : 0 $  |  dès 9 : 0.055 $
+App Engine      Cloud Firestore Read Ops Jakarta                               [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Log Read Bandwidth Mumbai                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.138 $
+App Engine      Cloud Firestore Entity Writes (named databases) Iowa           [count]  dès 0 : 9e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Madrid              [count]  dès 0 : 3.5e-07 $
+App Engine      Flex Instance Core Hours Sao Paulo                             [hour]  dès 0 : 0.079 $
+App Engine      Cloud Firestore Read Ops Seoul                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Cloud Firestore Entity Deletes Salt Lake City                  [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore TTL Deletes Jakarta                            [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops Delhi (named databases)               [count]  dès 0 : 3.5e-07 $
+App Engine      Cloud Firestore TTL Deletes Osaka (named databases)            [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Taiwan                             [count]  dès 0 : 1.15e-07 $
+App Engine      Cloud Firestore Entity Deletes London (named databases)        [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops Santiago                              [count]  dès 0 : 0 $  |  dès 50000 : 4.3e-07 $
+App Engine      Cloud Datastore Entity Writes Oregon                           [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+App Engine      Log Read Bandwidth Frankfurt                                   [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.144 $
+App Engine      Frontend Instances Northern Virginia                           [hour]  dès 0 : 0 $  |  dès 28 : 0.055 $
+App Engine      Cloud Firestore Read Ops Iowa                                  [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+App Engine      Frontend Instances Singapore                                   [hour]  dès 0 : 0 $  |  dès 28 : 0.061685 $
+App Engine      Cloud Firestore TTL Deletes Paris                              [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Deletes Dallas                          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Flex Instance RAM Hong Kong                                    [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Firestore Entity Deletes Oregon (named databases)        [count]  dès 0 : 1e-07 $
+App Engine      Backend Instances Northern Virginia                            [hour]  dès 0 : 0 $  |  dès 9 : 0.055 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Belgium          [count]  dès 0 : 1.1e-07 $
+App Engine      Frontend Instances Sydney                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.068 $
+App Engine      Cloud Firestore TTL Deletes Frankfurt (named databases)        [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Finland        [count]  dès 0 : 9.9e-07 $
+App Engine      Cloud Firestore Entity Writes Zurich (named databases)         [count]  dès 0 : 1.26e-06 $
+App Engine      Flex Instance Core Hours Taiwan                                [hour]  dès 0 : 0.0609055 $
+App Engine      Cloud Firestore Entity Writes (named databases) Berlin         [count]  dès 0 : 1.39e-06 $
+App Engine      Cloud Datastore Entity Writes Jakarta                          [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore Entity Writes Las Vegas                        [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Flex Instance Core Hours EMEA                                  [hour]  dès 0 : 0.0579 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Milan            [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore TTL Deletes Oregon                             [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore TTL Deletes Japan (named databases)            [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Frankfurt                       [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops Frankfurt (named databases)           [count]  dès 0 : 3.9e-07 $
+App Engine      Backend Instances Osaka                                        [hour]  dès 0 : 0 $  |  dès 9 : 0.065 $
+App Engine      Cloud Firestore Entity Writes europe-west5 Frankfurt (named da [count]  dès 0 : 1.17e-06 $
+App Engine      Backend Instances Sao Paulo                                    [hour]  dès 0 : 0 $  |  dès 9 : 0.075 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Santiago         [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Firestore Read Ops Netherlands                           [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+App Engine      Cloud Firestore TTL Deletes Melbourne                          [count]  dès 0 : 1.1e-07 $
+App Engine      Frontend Instances Hong Kong                                   [hour]  dès 0 : 0 $  |  dès 28 : 0.063 $
+App Engine      Cloud Firestore Entity Deletes Doha                            [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Frontend Instances Osaka                                       [hour]  dès 0 : 0 $  |  dès 28 : 0.065 $
+App Engine      Cloud Firestore TTL Deletes Sydney (named databases)           [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Madrid                             [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore TTL Deletes Seoul                              [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes North America 7                 [count]  dès 0 : 2e-07 $
+App Engine      Cloud Firestore Read Ops Los Angeles                           [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Flex Instance Core Hours Sydney                                [hour]  dès 0 : 0.071 $
+App Engine      Cloud Datastore Entity Writes Melbourne                        [count]  dès 0 : 0 $  |  dès 20000 : 1.03e-06 $
+App Engine      Cloud Datastore Entity Deletes Netherlands                     [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Mumbai                          [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Jakarta (named databases)        [count]  dès 0 : 1.15e-06 $
+App Engine      Backend Instances Zurich                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.065 $
+App Engine      Cloud Firestore Entity Writes Finland                          [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Toronto                         [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Flex Instance Core Hours Salt Lake City                        [hour]  dès 0 : 0.063 $
+App Engine      Cloud Firestore Entity Writes Seoul (named databases)          [count]  dès 0 : 1.15e-06 $
+App Engine      Cloud Firestore TTL Deletes Sydney                             [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Warsaw                           [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Datastore Entity Writes Mumbai                           [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+App Engine      Cloud Firestore Entity Writes (named databases)                [count]  dès 0 : 1.8e-06 $
+App Engine      Cloud Firestore Read Ops Columbus                              [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+App Engine      Backend Instances Montreal                                     [hour]  dès 0 : 0 $  |  dès 9 : 0.053 $
+App Engine      Cloud Firestore Entity Writes Los Angeles                      [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+App Engine      Cloud Firestore TTL Deletes London (named databases)           [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Hong Kong                        [count]  dès 0 : 0 $  |  dès 20000 : 1.8e-06 $
+App Engine      Cloud Firestore Entity Writes Madrid                           [count]  dès 0 : 0 $  |  dès 20000 : 1.06e-06 $
+App Engine      Cloud Datastore Read Ops Los Angeles                           [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Flex Instance Core Hours Northern Virginia                     [hour]  dès 0 : 0.056 $
+App Engine      Cloud Firestore Read Ops europe-west5 Frankfurt (named databas [count]  dès 0 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Zurich                          [count]  dès 0 : 0 $  |  dès 20000 : 1.4e-07 $
+App Engine      Cloud Firestore Read Ops North America 7                       [count]  dès 0 : 6e-07 $
+App Engine      Flex Instance RAM Japan                                        [gibibyte hour]  dès 0 : 0.0089 $
+App Engine      Cloud Firestore Read Ops Madrid                                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore Read Ops Tel Aviv                              [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+App Engine      Cloud Datastore Entity Writes Los Angeles                      [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+App Engine      Cloud Firestore Read Ops Sao Paulo (named databases)           [count]  dès 0 : 4.5e-07 $
+App Engine      Cloud Firestore Entity Writes Los Angeles (named databases)    [count]  dès 0 : 1.08e-06 $
+App Engine      Cloud Firestore Entity Writes Warsaw (named databases)         [count]  dès 0 : 1.17e-06 $
+App Engine      Backend Instances Salt Lake City                               [hour]  dès 0 : 0 $  |  dès 9 : 0.06 $
+App Engine      Cloud Firestore Entity Deletes Japan                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Belgium                          [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Firestore TTL Deletes Virginia (named databases)         [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Datastore Read Ops Osaka                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Cloud Firestore Read Ops Sydney                                [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Cloud Firestore TTL Deletes Jakarta (named databases)          [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Sao Paulo (named databases)        [count]  dès 0 : 1.5e-07 $
+App Engine      Cloud Firestore Entity Writes Toronto (named databases)        [count]  dès 0 : 9.9e-07 $
+App Engine      Cloud Firestore Read Ops London                                [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Columbus      [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Montreal                        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Taiwan (named databases)        [count]  dès 0 : 1.15e-07 $
+App Engine      Cloud Firestore Read Ops Toronto                               [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Sao Paulo                          [count]  dès 0 : 1.5e-07 $
+App Engine      Cloud Datastore Entity Writes Sao Paulo                        [count]  dès 0 : 0 $  |  dès 20000 : 1.35e-06 $
+App Engine      Cloud Datastore Entity Writes Netherlands                      [count]  dès 0 : 0 $  |  dès 20000 : 1.02e-06 $
+App Engine      Cloud Firestore TTL Deletes Tel Aviv                           [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Phoenix        [count]  dès 0 : 9e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Madrid        [count]  dès 0 : 1.2e-07 $
+App Engine      Log Read Bandwidth Los Angeles                                 [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.144 $
+App Engine      Cloud Firestore Entity Deletes Warsaw                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Iowa                             [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+App Engine      Cloud Firestore Read Ops Berlin                                [count]  dès 0 : 0 $  |  dès 50000 : 4.6e-07 $
+App Engine      Cloud Firestore Entity Writes London (named databases)         [count]  dès 0 : 1.17e-06 $
+App Engine      Cloud Firestore Entity Writes Tel Aviv                         [count]  dès 0 : 0 $  |  dès 20000 : 1.02e-06 $
+App Engine      Cloud Datastore Read Ops Taiwan                                [count]  dès 0 : 0 $  |  dès 50000 : 3.45e-07 $
+App Engine      Cloud Firestore TTL Deletes Doha (named databases)             [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Oregon                           [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+App Engine      Cloud Firestore Entity Deletes Singapore                       [count]  dès 0 : 0 $  |  dès 20000 : 1.23e-07 $
+App Engine      Cloud Datastore Entity Deletes Seoul                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Writes Japan                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore Read Ops Seoul (named databases)               [count]  dès 0 : 3.8e-07 $
+App Engine      Backend Instances Mumbai                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.058 $
+App Engine      Flex Instance RAM Los Angeles                                  [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Datastore Entity Deletes Las Vegas                       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Paris (named databases)            [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes North America 7                  [count]  dès 0 : 1.8e-06 $
+App Engine      Cloud Firestore Entity Deletes Seoul (named databases)         [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Milan               [count]  dès 0 : 3.5e-07 $
+App Engine      Log Read Bandwidth                                             [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.12 $
+App Engine      Cloud Firestore TTL Deletes Singapore (named databases)        [count]  dès 0 : 1.23e-07 $
+App Engine      Cloud Datastore Read Ops Netherlands                           [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+App Engine      Cloud Firestore TTL Deletes Toronto                            [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Santiago                           [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Firestore TTL Deletes Toronto (named databases)          [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Datastore Entity Deletes Toronto                         [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Frontend Instances Japan                                       [hour]  dès 0 : 0 $  |  dès 28 : 0.065 $
+App Engine      Cloud Firestore TTL Deletes Seoul (named databases)            [count]  dès 0 : 1.3e-07 $
+App Engine      Log Read Bandwidth Sao Paulo                                   [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.18 $
+App Engine      Cloud Firestore TTL Deletes Hong Kong (named databases)        [count]  dès 0 : 2e-07 $
+App Engine      Flex Instance Core Hours Montreal                              [hour]  dès 0 : 0.056 $
+App Engine      Cloud Firestore Read Ops Doha                                  [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Cloud Firestore TTL Deletes Japan                              [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Finland                            [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Milan                              [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Datastore Entity Writes Warsaw                           [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Firestore Entity Writes Japan                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Log Read Bandwidth Taiwan                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.138948 $
+App Engine      Log Read Bandwidth Osaka                                       [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.156 $
+App Engine      Cloud Firestore Read Ops Zurich                                [count]  dès 0 : 0 $  |  dès 50000 : 4.2e-07 $
+App Engine      Flex Instance RAM Zurich                                       [gibibyte hour]  dès 0 : 0.009 $
+App Engine      Cloud Firestore Entity Deletes Taiwan                          [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-07 $
+App Engine      Cloud Datastore Read Ops Hong Kong                             [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+App Engine      Cloud Firestore TTL Deletes Mumbai                             [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops Sao Paulo                             [count]  dès 0 : 0 $  |  dès 50000 : 4.5e-07 $
+App Engine      Cloud Firestore Entity Writes Northern Virginia                [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Firestore Entity Writes Phoenix                          [count]  dès 0 : 0 $  |  dès 20000 : 9e-07 $
+App Engine      Cloud Firestore TTL Deletes Salt Lake City                     [count]  dès 0 : 1.2e-07 $
+App Engine      Backend Instances Seoul                                        [hour]  dès 0 : 0 $  |  dès 9 : 0.065 $
+App Engine      Cloud Firestore Entity Deletes Zurich (named databases)        [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Turin          [count]  dès 0 : 1.16e-06 $
+App Engine      Cloud Firestore Read Ops Salt Lake City                        [count]  dès 0 : 0 $  |  dès 50000 : 3.6e-07 $
+App Engine      Flex Instance Core Hours Japan                                 [hour]  dès 0 : 0.0666 $
+App Engine      Cloud Firestore TTL Deletes Montreal                           [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Dallas        [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Delhi                            [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+App Engine      Log Read Bandwidth Montreal                                    [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.132 $
+App Engine      Cloud Firestore Entity Deletes Osaka (named databases)         [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Melbourne                       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Read Ops Warsaw (named databases)              [count]  dès 0 : 3.9e-07 $
+App Engine      Cloud Firestore Entity Deletes Milan                           [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Frontend Instances Salt Lake City                              [hour]  dès 0 : 0 $  |  dès 28 : 0.06 $
+App Engine      Cloud Firestore TTL Deletes Los Angeles (named databases)      [count]  dès 0 : 1.2e-07 $
+App Engine      Log Read Bandwidth Northern Virginia                           [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.132 $
+App Engine      Cloud Firestore Read Ops (named databases) Finland             [count]  dès 0 : 3.3e-07 $
+App Engine      Cloud Datastore Entity Writes London                           [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Datastore Entity Deletes Japan                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Frontend Instances Frankfurt                                   [hour]  dès 0 : 0 $  |  dès 28 : 0.06 $
+App Engine      Cloud Firestore TTL Deletes North America 7                    [count]  dès 0 : 2e-07 $
+App Engine      Backend Instances Singapore                                    [hour]  dès 0 : 0 $  |  dès 9 : 0.061685 $
+App Engine      Cloud Firestore Read Ops Paris (named databases)               [count]  dès 0 : 3.6e-07 $
+App Engine      Cloud Firestore Read Ops Montreal                              [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Delhi                           [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops Doha (named databases)                [count]  dès 0 : 3.6e-07 $
+App Engine      Cloud Firestore Read Ops Phoenix                               [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+App Engine      Cloud Firestore Entity Writes Oregon (named databases)         [count]  dès 0 : 9e-07 $
+App Engine      Cloud Firestore TTL Deletes Virginia                           [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes europe-west5 Frankfurt (named data [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Phoenix             [count]  dès 0 : 3e-07 $
+App Engine      Cloud Datastore Entity Deletes Los Angeles                     [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Datastore Read Ops Northern Virginia                     [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Osaka                           [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops Johannesburg                          [count]  dès 0 : 0 $  |  dès 50000 : 3.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Jakarta                         [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Hong Kong                          [count]  dès 0 : 2e-07 $
+App Engine      Cloud Firestore Read Ops Zurich (named databases)              [count]  dès 0 : 4.2e-07 $
+App Engine      Cloud Datastore Read Ops Las Vegas                             [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Backend Instances Warsaw                                       [hour]  dès 0 : 0 $  |  dès 9 : 0.06 $
+App Engine      Backend Instances Japan                                        [hour]  dès 0 : 0 $  |  dès 9 : 0.065 $
+App Engine      Flex Instance Core Hours Las Vegas                             [hour]  dès 0 : 0.056 $
+App Engine      Cloud Firestore Entity Deletes Singapore (named databases)     [count]  dès 0 : 1.23e-07 $
+App Engine      Cloud Firestore Read Ops Las Vegas                             [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Log Read Bandwidth Zurich                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.156 $
+App Engine      Cloud Firestore Read Ops Oregon                                [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+App Engine      Cloud Firestore Entity Deletes Melbourne                       [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Log Read Bandwidth Oregon                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.12 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Berlin           [count]  dès 0 : 1.5e-07 $
+App Engine      Cloud Firestore Read Ops Las Vegas (named databases)           [count]  dès 0 : 3.3e-07 $
+App Engine      Cloud Firestore TTL Deletes Netherlands (named databases)      [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Read Ops Warsaw                                [count]  dès 0 : 0 $  |  dès 50000 : 3.9e-07 $
+App Engine      Cloud Firestore Read Ops Mumbai                                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore TTL Deletes Las Vegas                          [count]  dès 0 : 1.1e-07 $
+App Engine      Flex Instance Core Hours                                       [hour]  dès 0 : 0.0526 $
+App Engine      Log Read Bandwidth Hong Kong                                   [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.15 $
+App Engine      Cloud Firestore Entity Deletes Toronto (named databases)       [count]  dès 0 : 1.1e-07 $
+App Engine      Frontend Instances London                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.06 $
+App Engine      Cloud Firestore Entity Writes Paris (named databases)          [count]  dès 0 : 1.07e-06 $
+App Engine      Cloud Firestore Read Ops Toronto (named databases)             [count]  dès 0 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Tel Aviv (named databases)      [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Johannesburg   [count]  dès 0 : 9.4e-07 $
+App Engine      Log Read Bandwidth Sydney                                      [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.162 $
+App Engine      Cloud Firestore Entity Deletes Tel Aviv                        [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes Frankfurt                       [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Paris (named databases)         [count]  dès 0 : 1.2e-07 $
+App Engine      Flex Instance Core Hours Seoul                                 [hour]  dès 0 : 0.0666 $
+App Engine      Cloud Firestore Entity Writes Delhi (named databases)          [count]  dès 0 : 1.04e-06 $
+App Engine      Cloud Datastore Entity Writes Frankfurt                        [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Firestore Read Ops Mumbai (named databases)              [count]  dès 0 : 3.5e-07 $
+App Engine      Cloud Datastore Read Ops Mumbai                                [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Phoenix          [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Sydney (named databases)        [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Writes Sydney                           [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore Entity Writes Toronto                          [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Firestore TTL Deletes Melbourne (named databases)        [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Finland       [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes North America 7                    [count]  dès 0 : 2e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Johannesburg  [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Berlin                          [count]  dès 0 : 0 $  |  dès 20000 : 1.5e-07 $
+App Engine      Cloud Firestore TTL Deletes Phoenix                            [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Doha (named databases)          [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore TTL Deletes Dammam                             [count]  dès 0 : 1.6e-07 $
+App Engine      Cloud Firestore Entity Deletes Sao Paulo (named databases)     [count]  dès 0 : 1.5e-07 $
+App Engine      Cloud Firestore Entity Deletes Sao Paulo                       [count]  dès 0 : 0 $  |  dès 20000 : 1.5e-07 $
+App Engine      Cloud Firestore Read Ops Hong Kong (named databases)           [count]  dès 0 : 6e-07 $
+App Engine      Flex Instance RAM Osaka                                        [gibibyte hour]  dès 0 : 0.0089 $
+App Engine      Cloud Firestore Entity Deletes Netherlands                     [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Firestore Read Ops Japan (named databases)               [count]  dès 0 : 3.8e-07 $
+App Engine      Cloud Firestore Entity Writes Northern Virginia (named databas [count]  dès 0 : 9.9e-07 $
+App Engine      Cloud Firestore TTL Deletes Taiwan (named databases)           [count]  dès 0 : 1.15e-07 $
+App Engine      Flex Instance RAM Sydney                                       [gibibyte hour]  dès 0 : 0.01 $
+App Engine      Cloud Firestore Entity Writes Zurich                           [count]  dès 0 : 0 $  |  dès 20000 : 1.26e-06 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Berlin        [count]  dès 0 : 1.5e-07 $
+App Engine      Cloud Firestore TTL Deletes London                             [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes Oregon                          [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Cloud Firestore Entity Writes Osaka                            [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore Entity Deletes Dammam                          [count]  dès 0 : 0 $  |  dès 20000 : 1.6e-07 $
+App Engine      Cloud Firestore TTL Deletes Frankfurt                          [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes                                 [count]  dès 0 : 0 $  |  dès 20000 : 2e-07 $
+App Engine      Frontend Instances                                             [hour]  dès 0 : 0 $  |  dès 28 : 0.05 $
+App Engine      Cloud Datastore Read Ops Oregon                                [count]  dès 0 : 0 $  |  dès 50000 : 3e-07 $
+App Engine      Cloud Firestore Entity Writes Paris                            [count]  dès 0 : 0 $  |  dès 20000 : 1.07e-06 $
+App Engine      Cloud Firestore Entity Deletes Los Angeles (named databases)   [count]  dès 0 : 1.2e-07 $
+App Engine      Log Read Bandwidth Singapore                                   [gibibyte]  dès 0 : 0 $  |  dès 0.0976562 : 0.148044 $
+App Engine      Frontend Instances Taiwan                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.057895 $
+App Engine      Cloud Firestore TTL Deletes Salt Lake City (named databases)   [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops (named databases) Columbus            [count]  dès 0 : 3e-07 $
+App Engine      Cloud Firestore Entity Writes (named databases) Santiago       [count]  dès 0 : 1.29e-06 $
+App Engine      Cloud Firestore TTL Deletes Delhi (named databases)            [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Sao Paulo (named databases)      [count]  dès 0 : 1.35e-06 $
+App Engine      Cloud Firestore Entity Writes Salt Lake City (named databases) [count]  dès 0 : 1.08e-06 $
+App Engine      Cloud Firestore Read Ops Delhi                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.5e-07 $
+App Engine      Cloud Firestore TTL Deletes Dallas                             [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Writes Mumbai                           [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+App Engine      Cloud Firestore Read Ops (named databases) Dammam              [count]  dès 0 : 4.8e-07 $
+App Engine      Flex Instance Core Hours Osaka                                 [hour]  dès 0 : 0.0666 $
+App Engine      Flex Instance RAM Sao Paulo                                    [gibibyte hour]  dès 0 : 0.011 $
+App Engine      Cloud Firestore Read Ops Belgium                               [count]  dès 0 : 0 $  |  dès 50000 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Writes Taiwan (named databases)         [count]  dès 0 : 1.042e-06 $
+App Engine      Cloud Firestore Entity Writes Berlin                           [count]  dès 0 : 0 $  |  dès 20000 : 1.39e-06 $
+App Engine      Cloud Firestore Entity Writes (named databases) Madrid         [count]  dès 0 : 1.06e-06 $
+App Engine      Cloud Firestore Entity Deletes Frankfurt (named databases)     [count]  dès 0 : 1.3e-07 $
+App Engine      Cloud Datastore Entity Deletes London                          [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Entity Deletes Paris                           [count]  dès 0 : 0 $  |  dès 20000 : 1.2e-07 $
+App Engine      Cloud Datastore Read Ops Jakarta                               [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Backend Instances                                              [hour]  dès 0 : 0 $  |  dès 9 : 0.05 $
+App Engine      Cloud Firestore Entity Writes Salt Lake City                   [count]  dès 0 : 0 $  |  dès 20000 : 1.08e-06 $
+App Engine      Cloud Firestore Read Ops Oregon (named databases)              [count]  dès 0 : 3e-07 $
+App Engine      Cloud Firestore Entity Deletes Warsaw (named databases)        [count]  dès 0 : 1.3e-07 $
+App Engine      Frontend Instances Las Vegas                                   [hour]  dès 0 : 0 $  |  dès 28 : 0.055 $
+App Engine      Cloud Firestore Read Ops Northern Virginia (named databases)   [count]  dès 0 : 3.3e-07 $
+App Engine      Cloud Firestore Entity Writes Melbourne                        [count]  dès 0 : 0 $  |  dès 20000 : 1.03e-06 $
+App Engine      Cloud Firestore Entity Deletes Belgium                         [count]  dès 0 : 0 $  |  dès 20000 : 1.1e-07 $
+App Engine      Cloud Datastore Entity Writes Delhi                            [count]  dès 0 : 0 $  |  dès 20000 : 1.04e-06 $
+App Engine      Cloud Firestore Entity Deletes Northern Virginia (named databa [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore Entity Writes Mumbai (named databases)         [count]  dès 0 : 1.04e-06 $
+App Engine      Cloud Firestore Read Ops Salt Lake City (named databases)      [count]  dès 0 : 3.6e-07 $
+App Engine      Cloud Firestore Entity Writes Doha (named databases)           [count]  dès 0 : 1.09e-06 $
+App Engine      Cloud Datastore Entity Writes Montreal                         [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Firestore Entity Writes Frankfurt                        [count]  dès 0 : 0 $  |  dès 20000 : 1.17e-06 $
+App Engine      Cloud Firestore Read Ops (named databases) Belgium             [count]  dès 0 : 3.3e-07 $
+App Engine      Cloud Firestore TTL Deletes (named databases)                  [count]  dès 0 : 2e-07 $
+App Engine      Cloud Datastore Read Ops Melbourne                             [count]  dès 0 : 0 $  |  dès 50000 : 3.4e-07 $
+App Engine      Cloud Firestore TTL Deletes Netherlands                        [count]  dès 0 : 1.1e-07 $
+App Engine      Flex Instance Core Hours Singapore                             [hour]  dès 0 : 0.0648926 $
+App Engine      Cloud Firestore Read Ops Osaka                                 [count]  dès 0 : 0 $  |  dès 50000 : 3.8e-07 $
+App Engine      Frontend Instances Los Angeles                                 [hour]  dès 0 : 0 $  |  dès 28 : 0.06 $
+App Engine      Cloud Firestore TTL Deletes Belgium                            [count]  dès 0 : 1.1e-07 $
+App Engine      Cloud Firestore TTL Deletes Zurich                             [count]  dès 0 : 1.4e-07 $
+App Engine      Cloud Datastore Read Ops Zurich                                [count]  dès 0 : 0 $  |  dès 50000 : 4.2e-07 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Madrid           [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Read Ops Los Angeles (named databases)         [count]  dès 0 : 3.6e-07 $
+App Engine      Cloud Firestore Entity Writes Montreal                         [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Cloud Datastore Entity Writes Sydney                           [count]  dès 0 : 0 $  |  dès 20000 : 1.15e-06 $
+App Engine      Cloud Firestore TTL Deletes (named databases) Dallas           [count]  dès 0 : 1.2e-07 $
+App Engine      Cloud Firestore Entity Deletes (named databases) Iowa          [count]  dès 0 : 1e-07 $
+App Engine      Cloud Firestore Entity Deletes Phoenix                         [count]  dès 0 : 0 $  |  dès 20000 : 1e-07 $
+App Engine      Cloud Datastore Entity Writes Las Vegas                        [count]  dès 0 : 0 $  |  dès 20000 : 9.9e-07 $
+App Engine      Frontend Instances Warsaw                                      [hour]  dès 0 : 0 $  |  dès 28 : 0.06 $
+App Engine      Cloud Firestore Entity Deletes Santiago                        [count]  dès 0 : 0 $  |  dès 20000 : 1.4e-07 $
+App Engine      Cloud Datastore Entity Deletes Jakarta                         [count]  dès 0 : 0 $  |  dès 20000 : 1.3e-07 $
+App Engine      Cloud Firestore Read Ops                                       [count]  dès 0 : 0 $  |  dès 50000 : 6e-07 $
+
+Preuves brutes écrites dans /home/epictetoo73/tinyinsta-b/raw/verify/

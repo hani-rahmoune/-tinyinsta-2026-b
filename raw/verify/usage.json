@@ -1,0 +1,50 @@
+{
+ "datastore.googleapis.com/entity/read_sizes": {
+  "2026-11-24 type=ENTITY_FETCH": 22811.0,
+  "2026-11-24 type=ENTITY_SCAN": 1150967.0,
+  "2026-11-24 type=KEYS_ONLY": 50601.0,
+  "2026-11-25 type=ENTITY_FETCH": 70196.0,
+  "2026-11-25 type=ENTITY_SCAN": 1407366.0
+ },
+ "datastore.googleapis.com/entity/write_sizes": {
+  "2026-11-24 op=CREATE": 610392.0,
+  "2026-11-24 op=DELETE": 39599.0
+ },
+ "datastore.googleapis.com/api/request_count": {
+  "2026-11-24 api_method=Commit": 1343.0,
+  "2026-11-24 api_method=Lookup": 22810.0,
+  "2026-11-24 api_method=Query": 58267.0,
+  "2026-11-25 api_method=Lookup": 70200.0,
+  "2026-11-25 api_method=Query": 70373.0
+ },
+ "firestore.googleapis.com/document/read_count": {},
+ "firestore.googleapis.com/document/write_count": {},
+ "firestore.googleapis.com/document/delete_count": {},
+ "instance_hours": {
+  "20261123t222612 ": 0.0,
+  "20261123t222612 active": 0.0,
+  "20261123t222612 idle": 0.25,
+  "20261123t222612 lameduck": 0.0,
+  "20261123t222612 loading": 0.0,
+  "fix1 ": 0.0,
+  "fix1 active": 0.15,
+  "fix1 idle": 0.12,
+  "fix1 lameduck": 0.0,
+  "fix1 loading": 0.0,
+  "fixed1 ": 0.0,
+  "fixed1 active": 0.45,
+  "fixed1 idle": 22.73,
+  "fixed1 lameduck": 0.0,
+  "fixed1 loading": 0.02,
+  "fixed2 ": 0.0,
+  "fixed2 active": 0.25,
+  "fixed2 idle": 0.33,
+  "fixed2 lameduck": 0.0,
+  "fixed2 loading": 0.02,
+  "fixed4 ": 0.0,
+  "fixed4 active": 0.42,
+  "fixed4 idle": 1.47,
+  "fixed4 lameduck": 0.0,
+  "fixed4 loading": 0.0
+ }
+}
