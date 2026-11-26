@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Purge d'un jeu de donnees par petits paquets, pour eviter les timeouts."""
+"""Supprime un jeu de donnees par paquets de 400, pour eviter les timeouts.
+
+Essai pour effacer le u10000 rate, abandonne (trop lent) : le jeu a ete
+refait sous le nom u10k avec bench/seed_order.sh.
+
+  python bench/supprimer_jeu.py <projet> <prefixe>
+"""
 import sys
 import time
 

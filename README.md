@@ -46,7 +46,7 @@ Toutes les valeurs ci-dessous sont relevées sur le projet par [`bench/verify.py
 | `fixed4` | 25/11 13:20, redéployée à 13:31 | 25/11 13:32–13:41 | 25/11 13:49 |
 | `fix1` | 25/11 13:50 | 25/11 13:54–14:03 | 25/11 14:06 |
 
-**Jeux de données.** Les 26 jeux du sujet ont été générés avec [`bench/seed_exact.py`](bench/seed_exact.py) (voir [`bench/seed_order.sh`](bench/seed_order.sh)). Ils totalisent 394 800 entités (`U` entités `User` + `U×P` entités `Post` par jeu). Un écart au sujet : le jeu U = 10 000 porte le préfixe **`u10k`** au lieu de `u10000`. Le premier seeding de `u10000` a échoué (`DeadlineExceeded`), et sa purge a elle aussi échoué. Nous avons donc régénéré le jeu sous un préfixe neuf, avec des paramètres identiques (U = 10 000, P = 20, F = 20). Les entités `u10000_*` partielles restent dans la base. Aucune requête mesurée ne les lit, car une timeline ne lit que les posts des auteurs du jeu interrogé ([`main.py:61-72`](main.py)).
+**Jeux de données.** Les 26 jeux du sujet ont été générés avec [`bench/seed_exact.py`](bench/seed_exact.py) (voir [`bench/seed_order.sh`](bench/seed_order.sh)). Ils totalisent 394 800 entités (`U` entités `User` + `U×P` entités `Post` par jeu). Un écart au sujet : le jeu U = 10 000 porte le préfixe **`u10k`** au lieu de `u10000`. Le premier seeding de `u10000` a échoué (`DeadlineExceeded`), et sa suppression a elle aussi échoué ([`bench/seed_essai1.sh`](bench/seed_essai1.sh), [`bench/supprimer_jeu.py`](bench/supprimer_jeu.py)). Nous avons donc régénéré le jeu sous un préfixe neuf, avec des paramètres identiques (U = 10 000, P = 20, F = 20). Les entités `u10000_*` partielles restent dans la base. Aucune requête mesurée ne les lit, car une timeline ne lit que les posts des auteurs du jeu interrogé ([`main.py:61-72`](main.py)).
 
 **Traitement des journaux** ([`scripts/analyze.py`](scripts/analyze.py)) : les 10 premières secondes de chaque run sont écartées. Les médianes et les moyennes portent sur les réponses `200`. Le débit vaut `réponses 200 / durée de la fenêtre conservée`. Le nombre d'instances est celui des valeurs distinctes de l'en-tête `X-Instance`.
 
@@ -338,7 +338,7 @@ Voir le § 5.
 |---|---|---|---|
 | Lectures d'entités par clé | 93 007 | 6 × 10⁻⁷ $ | 0,06 $ |
 | Lectures d'entités par requête | 2 558 333 | 6 × 10⁻⁷ $ | 1,54 $ |
-| Lectures *keys-only* (purges) | 50 601 | 6 × 10⁻⁷ $ | 0,03 $ |
+| Lectures *keys-only* (suppressions de jeux) | 50 601 | 6 × 10⁻⁷ $ | 0,03 $ |
 | Écritures d'entités | 610 392 | 1,8 × 10⁻⁶ $ | 1,10 $ |
 | Suppressions d'entités | 39 599 | 2 × 10⁻⁷ $ | 0,01 $ |
 | Heures d'instance B1 : `fixed1` / `fixed2` / `fixed4` / `fix1` | 23,20 / 0,60 / 1,89 / 0,27 h (total 25,96 h) | 0,05 $ / h | 1,30 $ |

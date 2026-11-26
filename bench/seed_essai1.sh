@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
+# Premier essai, abandonne : echec sur u10000 (DeadlineExceeded).
+# Le script utilise pour la campagne est bench/seed_order.sh.
 # Genere les 26 jeux de donnees du sujet (~400 000 entites, quelques minutes, <1 $).
-#   P=<mon-projet> ./bench/seed_all.sh
+#   P=<mon-projet> ./bench/seed_essai1.sh
 # ATTENTION : ne JAMAIS relancer un prefixe deja genere (les posts s ajoutent).
 # Pour refaire un jeu : python bench/seed_exact.py --project $P --prefix <x> --purge
 set -euo pipefail
