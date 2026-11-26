@@ -43,8 +43,10 @@ Toutes les valeurs ci-dessous sont relevées sur le projet par [`bench/verify.py
 |---|---|---|---|
 | `fixed1` | 24/11 13:52 | partie 1 : 24/11 13:56-14:16 · partie 2 (N = 1) : 24/11 14:20-14:51 | **25/11 13:03** |
 | `fixed2` | 25/11 13:03 | 25/11 13:04-13:13 | 25/11 13:20 |
-| `fixed4` | 25/11 13:20, redéployée à 13:31 | 25/11 13:32-13:41 | 25/11 13:49 |
+| `fixed4` | 25/11 13:20, redéployée à 13:31 (\*) | 25/11 13:32-13:41 | 25/11 13:49 |
 | `fix1` | 25/11 13:50 | 25/11 13:54-14:03 | 25/11 14:06 |
+
+(\*) Les journaux d'audit montrent deux déploiements réussis de `fixed4` (13:20-13:21 et 13:31-13:32), sans erreur. Aucune mesure n'a été faite sur le premier : le premier run (`p2_n4_c1`) commence à 13:32:56, après le second. La raison du redéploiement n'est pas enregistrée dans les journaux.
 
 **Jeux de données.** Les 26 jeux du sujet ont été générés avec [`bench/seed_exact.py`](bench/seed_exact.py) (voir [`bench/seed_order.sh`](bench/seed_order.sh)). Ils totalisent 394 800 entités (`U` entités `User` + `U×P` entités `Post` par jeu). Un écart au sujet : le jeu U = 10 000 porte le préfixe `u10k` au lieu de `u10000`. Le premier seeding de `u10000` a échoué (`DeadlineExceeded`), et sa suppression a elle aussi échoué ([`bench/seed_essai1.sh`](bench/seed_essai1.sh), [`bench/supprimer_jeu.py`](bench/supprimer_jeu.py)). Nous avons donc régénéré le jeu sous un préfixe neuf, avec des paramètres identiques (U = 10 000, P = 20, F = 20). Les entités `u10000_*` partielles restent dans la base. Aucune requête mesurée ne les lit, car une timeline ne lit que les posts des auteurs du jeu interrogé ([`main.py:61-72`](main.py)).
 
@@ -345,7 +347,7 @@ Quantités consommées, mesurées par Cloud Monitoring sur le projet ([`raw/veri
 | Heures d'instance B1 : `fixed1` / `fixed2` / `fixed4` / `fix1` | 23,20 / 0,60 / 1,89 / 0,27 h (total 25,96 h) |
 | Heures d'instance F1 : version par défaut | 0,25 h |
 
-Montant facturé, d'après la page Facturation (compte « Billing Account for Education », du 1er au 26 novembre 2026) :
+Montant facturé, d'après la page Facturation (compte « Billing Account for Education », dont `tinyinsta-b` est le seul projet, du 1er au 26 novembre 2026) :
 
 | Coût | Économies (crédits éducation) | Total payé |
 |---|---|---|
