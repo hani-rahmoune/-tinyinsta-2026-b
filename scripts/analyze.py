@@ -190,16 +190,12 @@ def fig1b(raw, out, warmup):
     ax.plot(f["F"], f["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=5,
             label="temps serveur (médian)")
 
-    # une droite par regime, pas une seule a travers la marche
+    # pente du temps serveur, une par regime (citee dans le README)
     ok = f.dropna(subset=["server_ms_median"])
-    lo, hi = ok[ok["F"] < CLIFF_F], ok[ok["F"] >= CLIFF_F]
-    for seg, col, lab in ((lo, "#2a9d8f", f"ajustement F < {CLIFF_F}"),
-                          (hi, "#555555", f"ajustement F >= {CLIFF_F}")):
+    for lab, seg in ((f"F < {CLIFF_F}", ok[ok["F"] < CLIFF_F]), (f"F >= {CLIFF_F}", ok[ok["F"] >= CLIFF_F])):
         if len(seg) >= 3:
-            a, b = np.polyfit(seg["F"], seg["server_ms_median"], 1)
-            xs = np.linspace(seg["F"].min(), seg["F"].max(), 50)
-            ax.plot(xs, a * xs + b, "--", color=col, lw=1.3,
-                    label=f"{lab} : {a:.2f} ms/followee")
+            a, _ = np.polyfit(seg["F"], seg["server_ms_median"], 1)
+            print(f"  pente {lab} : {a:.2f} ms/followee")
     style(ax, "followees par utilisateur (F)", "temps (ms)",
           "Fig. 1b : coût d'une timeline selon F",
           "fixed1, 1 requête à la fois (U=120, P=20, limit=20)")

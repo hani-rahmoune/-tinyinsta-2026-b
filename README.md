@@ -77,7 +77,7 @@ Toutes les valeurs ci-dessous sont relevées sur le projet par [`bench/verify.py
 
 ![Fig. 1b](figures/fig1b.png)
 
-*Fig. 1b : temps serveur médian et latence client médiane en fonction de F (U = 120, P = 20, limit = 20). Version `fixed1`, 1 requête à la fois. Les droites sont ajustées séparément de part et d'autre de F = 30. Données : [`figures/fig1b.csv`](figures/fig1b.csv).*
+*Fig. 1b : temps serveur médian et latence client médiane en fonction de F (U = 120, P = 20, limit = 20). Version `fixed1`, 1 requête à la fois. Données : [`figures/fig1b.csv`](figures/fig1b.csv).*
 
 #### Interprétation
 
@@ -91,6 +91,8 @@ Toutes les valeurs ci-dessous sont relevées sur le projet par [`bench/verify.py
 |---|---|---|---|---|---|---|---|---|---|
 | temps serveur médian (ms) | 29,1 | 29,8 | 30,8 | 31,4 | 32,8 | **577,4** | 908,1 | 1 364,2 | 1 758,9 |
 | débit (timelines/s) | 20,8 | 20,8 | 20,7 | 20,5 | 19,9 | **1,6** | 1,0 | 0,7 | 0,6 |
+
+Pentes du temps serveur, par régression linéaire sur chaque régime (affichées par `make figures`) :
 
 - **F ≤ 25 :** la pente est de 0,18 ms par followee.
 - **De F = 25 à F = 30 :** le temps est multiplié par 17,6.
