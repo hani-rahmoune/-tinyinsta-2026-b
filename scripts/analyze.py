@@ -157,7 +157,7 @@ def fig1a(raw, out, warmup):
         ax.set_xscale("log")
         style(ax, lab, "temps serveur médian (ms)",
               f"Fig. 1a : temps serveur selon {key}",
-              f"fixed1, 1 requête à la fois ({fixed})")
+              f"fixed1, 1 requête à la fois ({fixed}, limit=20), runs de 45 s")
         top = max(top, float(df["server_ms_median"].max()))
     # axe y a partir de 0, sinon une courbe plate a l'air de bouger
     for ax in axes:
@@ -198,7 +198,7 @@ def fig1b(raw, out, warmup):
             print(f"  pente {lab} : {a:.2f} ms/followee")
     style(ax, "followees par utilisateur (F)", "temps (ms)",
           "Fig. 1b : coût d'une timeline selon F",
-          "fixed1, 1 requête à la fois (U=120, P=20, limit=20)")
+          "fixed1, 1 requête à la fois (U=120, P=20, limit=20), runs de 45 s")
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -237,7 +237,7 @@ def fig2(d, out):
             "little_vs_median_pct", "instances_observed",
             "users_observed_max", "n_ok", "n_fail", "http_codes", "window_s", "file"]
     cols = [c for c in cols if c in d]
-    sub = "fixed1/fixed2/fixed4 (B1), jeu base (U=1000, P=20, F=20)"
+    sub = "fixed1/fixed2/fixed4 (B1), jeu base (U=1000, P=20, F=20, limit=20), runs de 75 s"
 
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for n, g in d.groupby("N"):
@@ -289,7 +289,7 @@ def fig3(before, after, out):
                       (axes[1], "latence client médiane (ms)", "latence")):
         log2_c(ax, d)
         style(ax, "utilisateurs Locust simultanés (C)", yl, f"Fig. 3 : {t}, avant / après",
-              "N=1 (fixed1 vs fix1, B1), jeu base (U=1000, P=20, F=20)")
+              "N=1 (fixed1 vs fix1, B1), runs de 75 s" + chr(10) + "jeu base (U=1000, P=20, F=20, limit=20)")
         ax.set_ylim(bottom=0)
         ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
