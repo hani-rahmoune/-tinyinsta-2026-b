@@ -132,7 +132,7 @@ Ce modèle est vérifié de deux façons indépendantes :
 1. Il donne exactement les valeurs mesurées sur les 11 jeux instrumentés (0 écart, [`figures/cost_1M_timelines.csv`](figures/cost_1M_timelines.csv)).
 2. Appliqué aux 92 485 timelines des journaux bruts qui ont reçu une réponse, il prédit 2 617 485 lectures. Cloud Monitoring en mesure 2 651 340 (lectures par clé et par requête, [`raw/verify/usage.json`](raw/verify/usage.json)), soit 1,3 % d'écart. Les 93 007 lectures par clé mesurées pour 92 485 timelines (+0,6 %) sont compatibles avec les requêtes faites en dehors de Locust : garde-fous `curl` des scripts, tests, `bench/verify.py`.
 
-**Prix.** Le prix est lu dans la grille officielle via la Cloud Billing Catalog API ([`raw/verify/prices.json`](raw/verify/prices.json)) : SKU `Cloud Datastore Read Ops`, 6 × 10⁻⁷ $ par lecture. C'est le même prix que le SKU `Cloud Firestore Read Ops Europe 3`. Le catalogue indique aussi une franchise gratuite de 50 000 lectures. Elle est négligeable ici : elle réduit le coût d'un million de timelines d'au plus 0,03 $.
+**Prix.** Le prix est lu dans la grille officielle via la Cloud Billing Catalog API ([`raw/verify/prices.json`](raw/verify/prices.json)) : SKU `Cloud Datastore Read Ops`, 6 × 10⁻⁷ $ par lecture.
 
 | Cas | Entités par timeline | Lectures pour 1 M de timelines | Coût de 1 M de timelines |
 |---|---|---|---|
@@ -151,7 +151,7 @@ Le détail des 26 jeux est dans [`figures/cost_1M_timelines.csv`](figures/cost_1
 
 [`app.yaml:2`](app.yaml) lance `gunicorn -b :$PORT main:app`, sans `--workers` ni `--threads`. Gunicorn démarre alors un seul worker synchrone, qui traite une requête à la fois. Nous prédisions trois choses :
 
-1. Une instance sature dès C = 2, à environ `1 / temps de service`.
+1. Une instance sature dès C = 1, à environ `1 / temps de service`.
 2. Au-delà, les requêtes ne font qu'attendre, et la latence suit la loi de Little.
 3. Le débit maximal est proportionnel à N, puisque les instances ne partagent que Datastore.
 
@@ -181,6 +181,8 @@ Les journaux de `fixed1` confirment la configuration réellement démarrée : `U
 - **N = 1 :** le débit vaut 21,1 timelines/s à C = 1, puis plafonne dès C = 2 entre 20,2 et 24,0 jusqu'à C = 64.
 - **N = 2 :** le plafond est atteint vers C = 32 (55,3 à C = 32, 54,9 à C = 64).
 - **N = 4 :** le plafond est atteint vers C = 32 (87,9 à C = 32, 88,3 à C = 64).
+
+La prédiction 1 (saturation dès C = 1) est presque vérifiée pour N = 1 : à C = 1, l'instance sert déjà 21,1 timelines/s, soit 88 % de son plafond, qui est atteint à C = 2.
 
 **Quelle est la capacité d'une instance, et qu'est-ce qui la limite ?**
 
@@ -256,7 +258,7 @@ Nos mesures établissent *où* se trouve la file. Elles n'établissent pas *pour
 
 **Bilan :** aucun gain démontré pour une hypothèse de concurrence supplémentaire. Nous ne recommandons pas de promouvoir `fix1` sur la foi de ces mesures.
 
-**Le goulot que la partie 1 désigne.** La correction la plus directe de la marche à F = 30 serait de découper la liste d'auteurs en paquets d'au plus 30 valeurs, soit `⌈(F+1)/30⌉` requêtes `IN` au lieu de F + 1 requêtes individuelles, puis de fusionner les résultats. Une alternative serait une timeline matérialisée à l'écriture (*fan-out on write*), qui coûte des écritures et rend la timeline cohérente à terme. Aucune des deux n'a été déployée ni mesurée dans cette campagne.
+**Le goulot que la partie 1 désigne.** La correction la plus directe de la marche à F = 30 serait de découper la liste d'auteurs en paquets d'au plus 30 valeurs, soit `⌈(F+1)/30⌉` requêtes `IN` au lieu de F + 1 requêtes individuelles, puis de fusionner les résultats. Elle n'a pas été déployée ni mesurée dans cette campagne.
 
 ---
 
