@@ -1,41 +1,20 @@
 #!/usr/bin/env python3
-"""TinyInsta 2026 — regenerate every figure and CSV from raw/ in one command.
+"""Regenere toutes les figures et tous les CSV a partir de raw/.
 
-    make figures          #  ==  python scripts/analyze.py
+    make figures    (ou python scripts/analyze.py)
 
-Reads raw/*.csv produced by bench/locustfile.py, whose names encode the
-experiment:
-
-    raw/p1_u_<U>.csv        Part 1, factor U   (P=20,  F=20)
-    raw/p1_p_<P>.csv        Part 1, factor P   (U=100, F=20)
-    raw/p1_f_<F>.csv        Part 1, factor F   (U=120, P=20)
-    raw/p2_n<N>_c<C>.csv    Part 2, N fixed instances, concurrency C
-    raw/p3_n<N>_c<C>.csv    Part 3, same protocol on the fixed version
-
-An optional _r<k> suffix marks a repeat; repeats are pooled.
-
-Writes figures/fig{1a,1b,2a,2b,3}.{csv,png} plus extras used by the report:
-  figures/summary.csv            per-run diagnostics (instances actually seen,
-                                 HTTP codes and client errors, before and after
-                                 the warm-up cut)
-  figures/cost_1M_timelines.csv  entity reads per timeline for each of the 26
-                                 datasets, and the cost of 1 million timelines
-  figures/campaign_cost.csv      reads / writes / deletes / instance-hours
-                                 measured on the project, at catalogue prices
-
-The last two read the evidence collected by bench/verify.py in raw/verify/
-(Cloud Monitoring usage, Cloud Billing Catalog prices, measured reads per
-timeline). Nothing in them is typed in by hand.
-
-Missing runs are skipped with a warning, so partial campaigns still plot.
+Fichiers lus : raw/p1_u_<U>.csv, raw/p1_p_<P>.csv, raw/p1_f_<F>.csv,
+raw/p2_n<N>_c<C>.csv, raw/p3_n<N>_c<C>.csv, et raw/verify/ (bench/verify.py).
 """
 from __future__ import annotations
 
 import argparse
 import glob
+import json
 import os
 import re
 import sys
+from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
@@ -44,48 +23,34 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
-LIMIT = 20          # timeline size requested by bench/locustfile.py
-
-# Datastore refuses an IN filter with more than 30 values; measured by
-# bench/verify.py (raw/verify/in_limit.json: 30 -> OK, 31 -> InvalidArgument).
-# main.py:47 builds F+1 authors, so the IN query of main.py:61-64 fails from
-# F = 30 on and main.py:65 falls back to one query per author (main.py:66-72).
+LIMIT = 20
+# limite du IN mesuree par bench/verify.py (raw/verify/in_limit.json)
 IN_LIMIT = 30
 CLIFF_F = IN_LIMIT
 
-# The 26 datasets of the subject (section 2), as seeded: prefix -> (U, P, F).
 DATASETS = {"u100": (100, 20, 20), "base": (1000, 20, 20), "u10k": (10000, 20, 20),
             "p10": (100, 10, 20), "p100": (100, 100, 20), "p1000": (100, 1000, 20),
             **{f"f{f:02d}": (120, 20, f) for f in range(5, 101, 5)}}
 
+COL = {1: "#1f4e79", 2: "#c1121f", 4: "#2a9d8f", 8: "#9d4edd"}
+
 
 def reads_per_timeline(P: int, F: int, limit: int = LIMIT) -> tuple[int, str]:
-    """Entities read by one get_timeline (main.py:38-73) and the path taken.
-
-    1 lookup of the User entity (main.py:43), then
-      F+1 <= IN_LIMIT : one IN query returning min(limit, (F+1)*P) posts;
-      F+1 >  IN_LIMIT : the IN query fails, then F+1 queries returning
-                        min(limit, P) posts each.
-    Checked against the instrumented run in raw/verify/reads_per_timeline.csv.
-    """
+    # 1 lecture du User, puis un seul IN si F+1 <= 30, sinon une requete par auteur
     authors = F + 1
     if authors <= IN_LIMIT:
         return 1 + min(limit, authors * P), "IN (main.py:61-64)"
     return 1 + authors * min(limit, P), "repli par auteur (main.py:66-72)"
 
-COL = {1: "#1f4e79", 2: "#c1121f", 4: "#2a9d8f", 8: "#9d4edd"}
 
-
-# ----------------------------------------------------------------- loading
 def load_run(path: str, warmup: float) -> dict | None:
-    """Per-run statistics, after dropping the first `warmup` seconds."""
     try:
         df = pd.read_csv(path)
-    except Exception as e:                                    # noqa: BLE001
-        print(f"  ! {path}: unreadable ({e})", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001
+        print(f"  ! {path}: illisible ({e})", file=sys.stderr)
         return None
     if df.empty:
-        print(f"  ! {path}: empty", file=sys.stderr)
+        print(f"  ! {path}: vide", file=sys.stderr)
         return None
 
     for c in ("T_START", "LATENCY_MS", "SERVER_MS", "STATUS", "USERS"):
@@ -94,7 +59,7 @@ def load_run(path: str, warmup: float) -> dict | None:
 
     t0 = df["T_START"].min()
     kept = df[df["T_START"] >= t0 + warmup]
-    if len(kept) < 5:          # very short run: keep everything rather than nothing
+    if len(kept) < 5:
         kept = df
 
     codes_all = df["STATUS"].fillna(0).astype(int).value_counts().sort_index()
@@ -128,7 +93,6 @@ def load_run(path: str, warmup: float) -> dict | None:
 
 
 def collect(raw: str, pattern: str, warmup: float) -> list[dict]:
-    """All runs whose basename matches `pattern`; named groups become columns."""
     rx = re.compile(pattern)
     rows = []
     for path in sorted(glob.glob(os.path.join(raw, "*.csv"))):
@@ -142,7 +106,6 @@ def collect(raw: str, pattern: str, warmup: float) -> list[dict]:
 
 
 def pool(rows: list[dict], keys: list[str]) -> pd.DataFrame:
-    """Average repeats of the same experimental point."""
     if not rows:
         return pd.DataFrame()
     df = pd.DataFrame(rows)
@@ -160,7 +123,7 @@ def save(df: pd.DataFrame, fig, name: str, out: str) -> None:
     df.to_csv(os.path.join(out, f"{name}.csv"), index=False)
     fig.savefig(os.path.join(out, f"{name}.png"), dpi=160, bbox_inches="tight")
     plt.close(fig)
-    print(f"  -> {out}/{name}.csv  +  {name}.png   ({len(df)} points)")
+    print(f"  -> {out}/{name}.csv + {name}.png ({len(df)} points)")
 
 
 def style(ax, xlabel, ylabel, title, sub=None):
@@ -171,32 +134,29 @@ def style(ax, xlabel, ylabel, title, sub=None):
     ax.spines[["top", "right"]].set_visible(False)
 
 
-# -------------------------------------------------------------- figure 1a
 def fig1a(raw, out, warmup):
     u = pool(collect(raw, r"p1_u_(?P<U>\d+)(_r\d+)?\.csv$", warmup), ["U"])
     p = pool(collect(raw, r"p1_p_(?P<P>\d+)(_r\d+)?\.csv$", warmup), ["P"])
-
-    # Only the values imposed by the protocol: U in {100, 1000, 10000},
-    # P in {10, 100, 1000}.
     if u.empty and p.empty:
-        print("  ! fig1a: no p1_u_* / p1_p_* runs", file=sys.stderr)
+        print("  ! fig1a: aucun run p1_u_* / p1_p_*", file=sys.stderr)
         return pd.DataFrame()
 
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     top = 1.0
     for ax, df, key, lab, fixed in (
-        (axes[0], u, "U", "users in the dataset (U)", "P=20, F=20"),
-        (axes[1], p, "P", "posts per user (P)", "U=100, F=20"),
+        (axes[0], u, "U", "utilisateurs dans le jeu (U)", "P=20, F=20"),
+        (axes[1], p, "P", "posts par utilisateur (P)", "U=100, F=20"),
     ):
         if df.empty:
             continue
         ax.plot(df[key], df["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=6)
         ax.set_xscale("log")
-        style(ax, lab, "median server time (ms)",
-              f"Fig. 1a — server time vs {key}",
-              f"fixed1, 1 request at a time ({fixed})")
+        style(ax, lab, "temps serveur median (ms)",
+              f"Fig. 1a : temps serveur selon {key}",
+              f"fixed1, 1 requete a la fois ({fixed})")
         top = max(top, float(df["server_ms_median"].max()))
-    for ax in axes:                     # 0-based y: a flat line must LOOK flat
+    # axe y a partir de 0, sinon une courbe plate a l'air de bouger
+    for ax in axes:
         ax.set_ylim(0, top * 1.35)
     fig.tight_layout()
 
@@ -212,28 +172,25 @@ def fig1a(raw, out, warmup):
     return tidy
 
 
-# -------------------------------------------------------------- figure 1b
 def fig1b(raw, out, warmup):
     f = pool(collect(raw, r"p1_f_(?P<F>\d+)(_r\d+)?\.csv$", warmup), ["F"])
     if f.empty:
-        print("  ! fig1b: no p1_f_* runs", file=sys.stderr)
+        print("  ! fig1b: aucun run p1_f_*", file=sys.stderr)
         return f
     f["client_minus_server_ms"] = f["client_ms_median"] - f["server_ms_median"]
     f["entity_reads_per_timeline"] = [reads_per_timeline(20, int(x))[0] for x in f["F"]]
 
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     ax.plot(f["F"], f["client_ms_median"], "s-", color=COL[2], lw=1.6, ms=5,
-            label="client latency (median)")
+            label="latence client (mediane)")
     ax.plot(f["F"], f["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=5,
-            label="server time (median)")
+            label="temps serveur (median)")
 
-    # Deux regimes : une seule requete IN tant que F+1 <= 30, puis le repli
-    # par auteur. Ajuster une droite a travers la discontinuite n'aurait aucun
-    # sens, donc chaque regime est ajuste separement.
+    # une droite par regime, pas une seule a travers la marche
     ok = f.dropna(subset=["server_ms_median"])
     lo, hi = ok[ok["F"] < CLIFF_F], ok[ok["F"] >= CLIFF_F]
-    for seg, col, lab in ((lo, "#2a9d8f", f"fit F < {CLIFF_F}"),
-                          (hi, "#555555", f"fit F >= {CLIFF_F}")):
+    for seg, col, lab in ((lo, "#2a9d8f", f"ajustement F < {CLIFF_F}"),
+                          (hi, "#555555", f"ajustement F >= {CLIFF_F}")):
         if len(seg) >= 3:
             a, b = np.polyfit(seg["F"], seg["server_ms_median"], 1)
             xs = np.linspace(seg["F"].min(), seg["F"].max(), 50)
@@ -241,17 +198,17 @@ def fig1b(raw, out, warmup):
                     label=f"{lab} : {a:.2f} ms/followee")
     if len(hi) and len(lo):
         ax.axvline(CLIFF_F - 0.5, color="#999999", lw=1, ls=":")
-        note = chr(10).join(["Datastore : IN limite a 30 valeurs",
-                             "F+1 = 31 auteurs -> exception",
-                             "-> 1 requete par auteur", "(main.py:65-72)"])
+        note = "\n".join(["Datastore : IN limite a 30 valeurs",
+                          "F+1 = 31 auteurs -> exception",
+                          "-> 1 requete par auteur", "(main.py:65-72)"])
         ax.annotate(note,
                     xy=(CLIFF_F - 0.5, ok["server_ms_median"].max() * .30),
                     xytext=(4, ok["server_ms_median"].max() * .72),
                     fontsize=8, color="#444444",
                     arrowprops=dict(arrowstyle="->", color="#999999", lw=1))
-    style(ax, "followees per user (F)", "time (ms)",
-          "Fig. 1b — timeline cost vs F",
-          "fixed1, 1 request at a time (U=120, P=20, limit=20)")
+    style(ax, "followees par utilisateur (F)", "temps (ms)",
+          "Fig. 1b : cout d'une timeline selon F",
+          "fixed1, 1 requete a la fois (U=120, P=20, limit=20)")
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -263,39 +220,42 @@ def fig1b(raw, out, warmup):
     return f
 
 
-# --------------------------------------------------------- figures 2a / 2b
 def part2(raw, out, warmup, tag="p2"):
     d = pool(collect(raw, rf"{tag}_n(?P<N>\d+)_c(?P<C>\d+)(_r\d+)?\.csv$", warmup),
              ["N", "C"])
     if d.empty:
         return d
-    # Little's law L = lambda * W relates C to the MEAN time in the system.
+    # Little relie C a la latence MOYENNE
     d["little_latency_ms"] = 1000 * d["C"] / d["throughput_rps"]
     d["little_vs_mean_pct"] = 100 * (d["little_latency_ms"] / d["client_ms_mean"] - 1)
     d["little_vs_median_pct"] = 100 * (d["little_latency_ms"] / d["client_ms_median"] - 1)
     return d
 
 
+def log2_c(ax, d):
+    ax.set_xscale("log", base=2)
+    ax.set_xticks(sorted(d["C"].unique()))
+    ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
+
+
 def fig2(d, out):
     if d.empty:
-        print("  ! fig2: no p2_* runs", file=sys.stderr)
+        print("  ! fig2: aucun run p2_*", file=sys.stderr)
         return
     cols = ["N", "C", "throughput_rps", "client_ms_median", "client_ms_mean", "client_ms_p95",
             "server_ms_median", "little_latency_ms", "little_vs_mean_pct",
             "little_vs_median_pct", "instances_observed",
             "users_observed_max", "n_ok", "n_fail", "http_codes", "window_s", "file"]
     cols = [c for c in cols if c in d]
+    sub = "fixed1/fixed2/fixed4 (B1), jeu base (U=1000, P=20, F=20)"
 
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     for n, g in d.groupby("N"):
         ax.plot(g["C"], g["throughput_rps"], "o-", lw=1.8, ms=5,
                 color=COL.get(n, "#444"), label=f"N = {n} instance(s)")
-    ax.set_xscale("log", base=2)
-    ax.set_xticks(sorted(d["C"].unique()))
-    ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
-    style(ax, "concurrent Locust users (C)", "throughput (requests/s)",
-          "Fig. 2a — throughput vs concurrency",
-          "fixed1/fixed2/fixed4 (B1), dataset base (U=1000, P=20, F=20)")
+    log2_c(ax, d)
+    style(ax, "utilisateurs Locust simultanes (C)", "debit (requetes/s)",
+          "Fig. 2a : debit selon la concurrence", sub)
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -305,47 +265,43 @@ def fig2(d, out):
     for n, g in d.groupby("N"):
         c = COL.get(n, "#444")
         ax.plot(g["C"], g["client_ms_median"], "o-", lw=1.8, ms=5, color=c,
-                label=f"N = {n}, measured median")
+                label=f"N = {n}, mediane mesuree")
         ax.plot(g["C"], g["client_ms_mean"], "x", ms=7, color=c,
-                label=f"N = {n}, measured mean")
+                label=f"N = {n}, moyenne mesuree")
         ax.plot(g["C"], g["little_latency_ms"], "--", lw=1.2, color=c, alpha=.75,
-                label=f"N = {n}, Little (C / throughput)")
-    ax.set_xscale("log", base=2)
+                label=f"N = {n}, Little (C / debit)")
+    log2_c(ax, d)
     ax.set_yscale("log")
-    ax.set_xticks(sorted(d["C"].unique()))
-    ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
-    style(ax, "concurrent Locust users (C)", "client latency (ms)",
-          "Fig. 2b — latency vs concurrency, against Little's law",
-          "fixed1/fixed2/fixed4 (B1), dataset base (U=1000, P=20, F=20)")
+    style(ax, "utilisateurs Locust simultanes (C)", "latence client (ms)",
+          "Fig. 2b : latence selon la concurrence, et loi de Little", sub)
     ax.legend(frameon=False, fontsize=7, ncol=3)
     fig.tight_layout()
     save(d[cols], fig, "fig2b", out)
 
 
-# --------------------------------------------------------------- figure 3
 def fig3(before, after, out):
     if before.empty or after.empty:
-        print("  ! fig3: need both p2_n1_* (before) and p3_n1_* (after)", file=sys.stderr)
+        print("  ! fig3: il faut p2_n1_* (avant) et p3_n1_* (apres)", file=sys.stderr)
         return
     b = before[before["N"] == 1].assign(variant="before (1 sync worker)")
     a = after[after["N"] == 1].assign(variant="after (2 workers x 8 threads)")
     if b.empty or a.empty:
-        print("  ! fig3: missing the N=1 series", file=sys.stderr)
+        print("  ! fig3: serie N=1 manquante", file=sys.stderr)
         return
     d = pd.concat([b, a], ignore_index=True)
 
+    labels = {"before (1 sync worker)": "avant (1 worker sync)",
+              "after (2 workers x 8 threads)": "apres (2 workers x 8 threads)"}
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
     for g, c, m in ((b, COL[1], "o-"), (a, COL[2], "s-")):
-        lab = g["variant"].iloc[0]
+        lab = labels[g["variant"].iloc[0]]
         axes[0].plot(g["C"], g["throughput_rps"], m, color=c, lw=1.8, ms=5, label=lab)
         axes[1].plot(g["C"], g["client_ms_median"], m, color=c, lw=1.8, ms=5, label=lab)
-    for ax, yl, t in ((axes[0], "throughput (requests/s)", "throughput"),
-                      (axes[1], "median client latency (ms)", "latency")):
-        ax.set_xscale("log", base=2)
-        ax.set_xticks(sorted(d["C"].unique()))
-        ax.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
-        style(ax, "concurrent Locust users (C)", yl, f"Fig. 3 — {t}, before / after",
-              "N=1 (fixed1 vs fix1, B1), dataset base (U=1000, P=20, F=20)")
+    for ax, yl, t in ((axes[0], "debit (requetes/s)", "debit"),
+                      (axes[1], "latence client mediane (ms)", "latence")):
+        log2_c(ax, d)
+        style(ax, "utilisateurs Locust simultanes (C)", yl, f"Fig. 3 : {t}, avant / apres",
+              "N=1 (fixed1 vs fix1, B1), jeu base (U=1000, P=20, F=20)")
         ax.set_ylim(bottom=0)
         ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -356,9 +312,8 @@ def fig3(before, after, out):
     save(d[[c for c in cols if c in d]], fig, "fig3", out)
 
 
-# ------------------------------------------------------------------ extras
 def _price(prices, sku):
-    """Unit price above the free tier, and the free-tier size, from the catalogue."""
+    # prix au-dela de la franchise, et taille de la franchise
     for k in prices:
         if k["service"] == "App Engine" and k["sku"] == sku:
             tiers = sorted(k["tiers"])
@@ -370,22 +325,19 @@ def _price(prices, sku):
 def costs(raw, out):
     vdir = os.path.join(raw, "verify")
     try:
-        import json
         prices = json.load(open(os.path.join(vdir, "prices.json")))
         usage = json.load(open(os.path.join(vdir, "usage.json")))
         measured = pd.read_csv(os.path.join(vdir, "reads_per_timeline.csv"))
     except OSError as e:
-        print(f"  ! costs: run bench/verify.py first ({e})", file=sys.stderr)
+        print(f"  ! couts: lancer bench/verify.py d'abord ({e})", file=sys.stderr)
         return
-    # Datastore operations of the App Engine default database are billed under
-    # the App Engine service in the catalogue (SKUs "Cloud Datastore ...").
+    # les SKU Datastore sont ranges sous le service App Engine dans le catalogue
     read_usd, read_free, _ = _price(prices, "Cloud Datastore Read Ops")
     write_usd, write_free, _ = _price(prices, "Cloud Datastore Entity Writes")
     del_usd, del_free, _ = _price(prices, "Cloud Datastore Entity Deletes")
     b_usd, b_free, _ = _price(prices, "Backend Instances")
     f_usd, f_free, _ = _price(prices, "Frontend Instances")
 
-    # 1. reads per timeline and cost of 1 million timelines, per dataset
     rows = []
     for prefix, (U, P, F) in DATASETS.items():
         reads, path = reads_per_timeline(P, F)
@@ -400,18 +352,16 @@ def costs(raw, out):
     chk = df[df["entity_reads_measured"] != ""]
     bad = chk[chk["entity_reads_measured"].astype(int) != chk["entity_reads_per_timeline"]]
     if len(bad):
-        print(f"  ! reads model contradicts the measurement for {list(bad['dataset'])}",
-              file=sys.stderr)
+        print(f"  ! le modele contredit la mesure pour {list(bad['dataset'])}", file=sys.stderr)
     df.to_csv(os.path.join(out, "cost_1M_timelines.csv"), index=False)
-    print(f"  -> {out}/cost_1M_timelines.csv   (model checked on {len(chk)} measured "
-          f"datasets, {len(bad)} mismatch)")
+    print(f"  -> {out}/cost_1M_timelines.csv (modele verifie sur {len(chk)} jeux, "
+          f"{len(bad)} ecart)")
 
-    # 2. what the campaign consumed (Cloud Monitoring) at catalogue prices
     def total(metric, pred=lambda k: True):
         return sum(v for k, v in usage.get(metric, {}).items() if pred(k))
     rd = "datastore.googleapis.com/entity/read_sizes"
     wr = "datastore.googleapis.com/entity/write_sizes"
-    hours = defaultdict_float()
+    hours = defaultdict(float)
     for k, v in usage.get("instance_hours", {}).items():
         hours[k.split(" ")[0]] += v
     lines = [
@@ -422,36 +372,31 @@ def costs(raw, out):
         ("entity deletes", total(wr, lambda k: "DELETE" in k), "count", del_usd, del_free),
     ]
     for v, h in sorted(hours.items()):
-        backend = v.startswith("fix")          # fixed1/2/4 and fix1 are B1
+        backend = v.startswith("fix")  # fixed1/2/4 et fix1 sont en B1
         lines.append((f"instance-hours {v} ({'B1' if backend else 'F1'})", round(h, 2), "hour",
                       b_usd if backend else f_usd, b_free if backend else f_free))
     camp = pd.DataFrame(lines, columns=["item", "quantity", "unit", "usd_per_unit_catalogue",
                                         "catalogue_free_tier_units"])
     camp["usd_list_price_no_free_tier"] = (camp["quantity"] * camp["usd_per_unit_catalogue"]).round(4)
     camp.to_csv(os.path.join(out, "campaign_cost.csv"), index=False)
-    print(f"  -> {out}/campaign_cost.csv   (list price, before free tier: "
+    print(f"  -> {out}/campaign_cost.csv (prix catalogue sans franchise : "
           f"{camp['usd_list_price_no_free_tier'].sum():.2f} $)")
-
-
-def defaultdict_float():
-    from collections import defaultdict
-    return defaultdict(float)
 
 
 def summary(raw, out, warmup):
     rows = [load_run(p, warmup) for p in sorted(glob.glob(os.path.join(raw, "*.csv")))]
     rows = [r for r in rows if r]
     if not rows:
-        print("  ! summary: raw/ is empty", file=sys.stderr)
+        print("  ! summary: raw/ est vide", file=sys.stderr)
         return
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out, "summary.csv"), index=False)
-    print(f"  -> {out}/summary.csv   ({len(df)} runs)")
+    print(f"  -> {out}/summary.csv ({len(df)} runs)")
     bad = df[df["n_fail"] > 0]
     if len(bad):
-        print(f"\n  ATTENTION: {len(bad)} run(s) with non-200 responses:")
+        print(f"\n  {len(bad)} run(s) avec des reponses non 200 :")
         for _, r in bad.iterrows():
-            print(f"    {r['file']}: {r['n_fail']}/{r['n_total']} failed  [{r['http_codes']}]")
+            print(f"    {r['file']}: {r['n_fail']}/{r['n_total']} en echec [{r['http_codes']}]")
 
 
 def main() -> int:
@@ -460,23 +405,23 @@ def main() -> int:
     ap.add_argument("--raw", default="raw")
     ap.add_argument("--out", default="figures")
     ap.add_argument("--warmup", type=float, default=10.0,
-                    help="seconds dropped at the start of every run (default 10)")
+                    help="secondes ecartees au debut de chaque run (10 par defaut)")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
-    print(f"raw = {a.raw}/   out = {a.out}/   warmup = {a.warmup}s")
-    print("\nPart 1")
+    print(f"raw = {a.raw}/  out = {a.out}/  warmup = {a.warmup}s")
+    print("\nPartie 1")
     fig1a(a.raw, a.out, a.warmup)
     fig1b(a.raw, a.out, a.warmup)
-    print("\nPart 2")
+    print("\nPartie 2")
     p2 = part2(a.raw, a.out, a.warmup, "p2")
     fig2(p2, a.out)
-    print("\nPart 3")
+    print("\nPartie 3")
     fig3(p2, part2(a.raw, a.out, a.warmup, "p3"), a.out)
-    print("\nExtras")
+    print("\nCouts et resume")
     costs(a.raw, a.out)
     summary(a.raw, a.out, a.warmup)
-    print("\ndone.")
+    print("\nfini.")
     return 0
 
 

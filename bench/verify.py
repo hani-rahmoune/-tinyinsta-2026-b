@@ -1,20 +1,11 @@
 #!/usr/bin/env python3
-"""Vérifications de validité : tout ce que le rapport affirme sur la plateforme
-est MESURÉ ici, sur le projet, plutôt que supposé.
+"""Preuves relevees sur le projet, ecrites dans raw/verify/.
 
-  python3 bench/verify.py            (depuis la racine du dépôt, dans Cloud Shell)
-  python3 bench/verify.py E F G      (seulement certaines sections)
+  python3 bench/verify.py          (toutes les sections, depuis Cloud Shell)
+  python3 bench/verify.py E F G    (seulement certaines)
 
-Écrit les preuves brutes dans raw/verify/ et un résumé lisible sur la sortie.
-
-  A. chemin de code réellement exécuté par get_timeline (main.py), entités lues
-     par timeline, et limite du filtre IN mesurée (30 vs 31 valeurs) ;
-  B. état de la plateforme : région, base, index, versions, budget, outils ;
-  C. démarrages / arrêts des versions (journaux d'audit) -> heures d'instance ;
-  D. configuration gunicorn réellement démarrée (journaux fixed1 / fix1) ;
-  E. pendingTime App Engine (attente AVANT l'instance) pendant chaque run ;
-  F. lectures / écritures Datastore et heures d'instance (Cloud Monitoring) ;
-  G. grille tarifaire officielle (Cloud Billing Catalog API).
+A chemin de code et limite du IN, B plateforme, C versions (audit),
+D gunicorn, E pendingTime, F Cloud Monitoring, G grille tarifaire.
 """
 import csv, glob, json, os, statistics, subprocess, sys, traceback
 import urllib.parse, urllib.request
@@ -38,8 +29,7 @@ PROJECT = os.environ.get("PROJECT") or sh("gcloud", "config", "get-value", "proj
 os.environ["GOOGLE_CLOUD_PROJECT"] = PROJECT
 START = "2026-11-23T00:00:00Z"
 NOW = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-# Entrées de journal lues par run (les plus récentes de la fenêtre, donc en régime
-# établi) : une médiane n'a pas besoin des 6 000 lignes, et la lecture est lente.
+# lignes de journal lues par run (les plus recentes, donc en regime etabli)
 E_LIMIT = int(os.environ.get("E_LIMIT", "2000"))
 VERSION_OF = {"p1": "fixed1", "p2_n1": "fixed1", "p2_n2": "fixed2",
               "p2_n4": "fixed4", "p3_n1": "fix1"}
@@ -54,7 +44,7 @@ def save(name, obj):
 
 
 def section(t):
-    print("\n" + "=" * 78 + "\n" + t + "\n" + "=" * 78, flush=True)
+    print("\n[" + t + "]", flush=True)
 
 
 def guarded(fn):
@@ -79,7 +69,6 @@ def api(url):
 
 
 def run_windows():
-    """(fichier, version, début, fin) de chaque run, d'après raw/*.csv."""
     out = []
     for p in sorted(glob.glob(os.path.join(ROOT, "raw", "*.csv"))):
         name = os.path.basename(p)[:-4]
@@ -94,7 +83,6 @@ def iso(t):
     return datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
-# ----------------------------------------------------------------------- A
 @guarded
 def code_path():
     section("A. Chemin de code de get_timeline (main.py), mesuré")
@@ -160,7 +148,7 @@ def code_path():
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader(); w.writerows(rows)
 
-    # Limite du IN, mesurée directement : 30 puis 31 valeurs.
+    # limite du IN : 30 puis 31 valeurs
     dq.Query.fetch = orig_fetch
     ent = orig_get(main.client.key("User", "f30_u00000"))
     authors = sorted({*ent["follows"], "f30_u00000"})
@@ -168,7 +156,7 @@ def code_path():
     for n in (30, 31):
         try:
             q = main.client.query(kind="Post")
-            q.add_filter("author", "IN", authors[:n])   # comme main.py:62
+            q.add_filter("author", "IN", authors[:n])  # comme main.py:62
             q.order = ["-created"]
             res = f"OK, {len(list(q.fetch(limit=20)))} entités"
         except Exception as ex:
@@ -178,7 +166,6 @@ def code_path():
     save("in_limit.json", lim)
 
 
-# ----------------------------------------------------------------------- B
 @guarded
 def platform():
     section("B. État de la plateforme")
@@ -206,7 +193,6 @@ def platform():
     save("platform.json", res)
 
 
-# ----------------------------------------------------------------------- C
 @guarded
 def version_events():
     section("C. Créations / démarrages / arrêts de versions (journaux d'audit)")
@@ -238,13 +224,12 @@ def version_events():
         pp = e.get("protoPayload", {})
         first = (e.get("operation") or {}).get("first")
         if first is False:
-            continue  # une ligne par opération (la première)
+            continue
         print(f"{e['timestamp'][:19]}  {pp.get('methodName','').split('.')[-1]:14} "
               f"{pp.get('resourceName','').split('/')[-1]:18} "
               f"servingStatus={find(pp.get('request', {}), 'servingStatus')}")
 
 
-# ----------------------------------------------------------------------- D
 @guarded
 def gunicorn():
     section("D. Configuration gunicorn réellement démarrée")
@@ -263,7 +248,6 @@ def gunicorn():
             print(f"   {ts}  {t[:110]}")
 
 
-# ----------------------------------------------------------------------- E
 def dur(s):
     return float(s.rstrip("s")) * 1000 if isinstance(s, str) and s.endswith("s") else None
 
@@ -273,8 +257,7 @@ def pending():
     section("E. Journaux de requêtes App Engine : attente AVANT l'instance (pendingTime)")
     print(f"{'run':14} {'version':7} {'requêtes':>8} {'instances':>9} "
           f"{'latence méd. (ms)':>17} {'pendingTime méd. (ms)':>21} {'avec pending':>12}")
-    # Résultats conservés run par run : une reprise (E_RUNS=p3_n1_c64 ...) complète
-    # le fichier au lieu de l'écraser.
+    # sauve run par run, E_RUNS=... complete le fichier sans l'ecraser
     path = os.path.join(OUT, "pending_time.csv")
     done = {}
     if os.path.exists(path):
@@ -311,7 +294,6 @@ def pending():
             w.writeheader(); w.writerows(done[k] for k in sorted(done))
 
 
-# ----------------------------------------------------------------------- F
 def series(metric, aligner, period, extra=""):
     q = {"filter": f'metric.type="{metric}"{extra}', "interval.startTime": START,
          "interval.endTime": NOW, "aggregation.alignmentPeriod": f"{period}s",
@@ -362,7 +344,7 @@ def usage():
             if v:
                 print(f"   {d}  {l:40} {v:>12,.0f}")
 
-    # Heures d'instance par version : moyenne du nombre d'instances par minute.
+    # heures d'instance = moyenne du nombre d'instances par minute / 60
     ts = series("appengine.googleapis.com/system/instance_count", "ALIGN_MEAN", 60)
     hours = defaultdict(float)
     for s in ts:
@@ -377,7 +359,6 @@ def usage():
     save("usage.json", res)
 
 
-# ----------------------------------------------------------------------- G
 @guarded
 def prices():
     section("G. Grille tarifaire officielle (Cloud Billing Catalog API)")
