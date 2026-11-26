@@ -155,9 +155,9 @@ def fig1a(raw, out, warmup):
             continue
         ax.plot(df[key], df["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=6)
         ax.set_xscale("log")
-        style(ax, lab, "temps serveur median (ms)",
+        style(ax, lab, "temps serveur médian (ms)",
               f"Fig. 1a : temps serveur selon {key}",
-              f"fixed1, 1 requete a la fois ({fixed})")
+              f"fixed1, 1 requête à la fois ({fixed})")
         top = max(top, float(df["server_ms_median"].max()))
     # axe y a partir de 0, sinon une courbe plate a l'air de bouger
     for ax in axes:
@@ -186,9 +186,9 @@ def fig1b(raw, out, warmup):
 
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     ax.plot(f["F"], f["client_ms_median"], "s-", color=COL[2], lw=1.6, ms=5,
-            label="latence client (mediane)")
+            label="latence client (médiane)")
     ax.plot(f["F"], f["server_ms_median"], "o-", color=COL[1], lw=1.8, ms=5,
-            label="temps serveur (median)")
+            label="temps serveur (médian)")
 
     # une droite par regime, pas une seule a travers la marche
     ok = f.dropna(subset=["server_ms_median"])
@@ -200,19 +200,9 @@ def fig1b(raw, out, warmup):
             xs = np.linspace(seg["F"].min(), seg["F"].max(), 50)
             ax.plot(xs, a * xs + b, "--", color=col, lw=1.3,
                     label=f"{lab} : {a:.2f} ms/followee")
-    if len(hi) and len(lo):
-        ax.axvline(CLIFF_F - 0.5, color="#999999", lw=1, ls=":")
-        note = "\n".join(["Datastore : IN limite a 30 valeurs",
-                          "F+1 = 31 auteurs -> exception",
-                          "-> 1 requete par auteur", "(main.py:65-72)"])
-        ax.annotate(note,
-                    xy=(CLIFF_F - 0.5, ok["server_ms_median"].max() * .30),
-                    xytext=(4, ok["server_ms_median"].max() * .72),
-                    fontsize=8, color="#444444",
-                    arrowprops=dict(arrowstyle="->", color="#999999", lw=1))
     style(ax, "followees par utilisateur (F)", "temps (ms)",
-          "Fig. 1b : cout d'une timeline selon F",
-          "fixed1, 1 requete a la fois (U=120, P=20, limit=20)")
+          "Fig. 1b : coût d'une timeline selon F",
+          "fixed1, 1 requête à la fois (U=120, P=20, limit=20)")
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -258,8 +248,8 @@ def fig2(d, out):
         ax.plot(g["C"], g["throughput_rps"], "o-", lw=1.8, ms=5,
                 color=COL.get(n, "#444"), label=f"N = {n} instance(s)")
     log2_c(ax, d)
-    style(ax, "utilisateurs Locust simultanes (C)", "debit (requetes/s)",
-          "Fig. 2a : debit selon la concurrence", sub)
+    style(ax, "utilisateurs Locust simultanés (C)", "débit (requêtes/s)",
+          "Fig. 2a : débit selon la concurrence", sub)
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
@@ -269,14 +259,14 @@ def fig2(d, out):
     for n, g in d.groupby("N"):
         c = COL.get(n, "#444")
         ax.plot(g["C"], g["client_ms_median"], "o-", lw=1.8, ms=5, color=c,
-                label=f"N = {n}, mediane mesuree")
+                label=f"N = {n}, médiane mesurée")
         ax.plot(g["C"], g["client_ms_mean"], "x", ms=7, color=c,
-                label=f"N = {n}, moyenne mesuree")
+                label=f"N = {n}, moyenne mesurée")
         ax.plot(g["C"], g["little_latency_ms"], "--", lw=1.2, color=c, alpha=.75,
-                label=f"N = {n}, Little (C / debit)")
+                label=f"N = {n}, Little (C / débit)")
     log2_c(ax, d)
     ax.set_yscale("log")
-    style(ax, "utilisateurs Locust simultanes (C)", "latence client (ms)",
+    style(ax, "utilisateurs Locust simultanés (C)", "latence client (ms)",
           "Fig. 2b : latence selon la concurrence, et loi de Little", sub)
     ax.legend(frameon=False, fontsize=7, ncol=3)
     fig.tight_layout()
@@ -295,16 +285,16 @@ def fig3(before, after, out):
     d = pd.concat([b, a], ignore_index=True)
 
     labels = {"before (1 sync worker)": "avant (1 worker sync)",
-              "after (2 workers x 8 threads)": "apres (2 workers x 8 threads)"}
+              "after (2 workers x 8 threads)": "après (2 workers x 8 threads)"}
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
     for g, c, m in ((b, COL[1], "o-"), (a, COL[2], "s-")):
         lab = labels[g["variant"].iloc[0]]
         axes[0].plot(g["C"], g["throughput_rps"], m, color=c, lw=1.8, ms=5, label=lab)
         axes[1].plot(g["C"], g["client_ms_median"], m, color=c, lw=1.8, ms=5, label=lab)
-    for ax, yl, t in ((axes[0], "debit (requetes/s)", "debit"),
-                      (axes[1], "latence client mediane (ms)", "latence")):
+    for ax, yl, t in ((axes[0], "débit (requêtes/s)", "débit"),
+                      (axes[1], "latence client médiane (ms)", "latence")):
         log2_c(ax, d)
-        style(ax, "utilisateurs Locust simultanes (C)", yl, f"Fig. 3 : {t}, avant / apres",
+        style(ax, "utilisateurs Locust simultanés (C)", yl, f"Fig. 3 : {t}, avant / après",
               "N=1 (fixed1 vs fix1, B1), jeu base (U=1000, P=20, F=20)")
         ax.set_ylim(bottom=0)
         ax.legend(frameon=False, fontsize=9)
