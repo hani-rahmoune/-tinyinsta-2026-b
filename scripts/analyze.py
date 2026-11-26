@@ -337,10 +337,6 @@ def costs(raw, out):
         return
     # les SKU Datastore sont ranges sous le service App Engine dans le catalogue
     read_usd, read_free, _ = _price(prices, "Cloud Datastore Read Ops")
-    write_usd, write_free, _ = _price(prices, "Cloud Datastore Entity Writes")
-    del_usd, del_free, _ = _price(prices, "Cloud Datastore Entity Deletes")
-    b_usd, b_free, _ = _price(prices, "Backend Instances")
-    f_usd, f_free, _ = _price(prices, "Frontend Instances")
 
     rows = []
     for prefix, (U, P, F) in DATASETS.items():
@@ -369,22 +365,18 @@ def costs(raw, out):
     for k, v in usage.get("instance_hours", {}).items():
         hours[k.split(" ")[0]] += v
     lines = [
-        ("entity reads (lookup)", total(rd, lambda k: "ENTITY_FETCH" in k), "count", read_usd, read_free),
-        ("entity reads (query)", total(rd, lambda k: "ENTITY_SCAN" in k), "count", read_usd, read_free),
-        ("entity reads (keys-only query)", total(rd, lambda k: "KEYS_ONLY" in k), "count", read_usd, read_free),
-        ("entity writes (create)", total(wr, lambda k: "CREATE" in k), "count", write_usd, write_free),
-        ("entity deletes", total(wr, lambda k: "DELETE" in k), "count", del_usd, del_free),
+        ("entity reads (lookup)", total(rd, lambda k: "ENTITY_FETCH" in k), "count"),
+        ("entity reads (query)", total(rd, lambda k: "ENTITY_SCAN" in k), "count"),
+        ("entity reads (keys-only query)", total(rd, lambda k: "KEYS_ONLY" in k), "count"),
+        ("entity writes (create)", total(wr, lambda k: "CREATE" in k), "count"),
+        ("entity deletes", total(wr, lambda k: "DELETE" in k), "count"),
     ]
     for v, h in sorted(hours.items()):
-        backend = v.startswith("fix")  # fixed1/2/4 et fix1 sont en B1
-        lines.append((f"instance-hours {v} ({'B1' if backend else 'F1'})", round(h, 2), "hour",
-                      b_usd if backend else f_usd, b_free if backend else f_free))
-    camp = pd.DataFrame(lines, columns=["item", "quantity", "unit", "usd_per_unit_catalogue",
-                                        "catalogue_free_tier_units"])
-    camp["usd_list_price_no_free_tier"] = (camp["quantity"] * camp["usd_per_unit_catalogue"]).round(4)
+        cls = "B1" if v.startswith("fix") else "F1"
+        lines.append((f"instance-hours {v} ({cls})", round(h, 2), "hour"))
+    camp = pd.DataFrame(lines, columns=["item", "quantity", "unit"])
     camp.to_csv(os.path.join(out, "campaign_cost.csv"), index=False)
-    print(f"  -> {out}/campaign_cost.csv (prix catalogue sans franchise : "
-          f"{camp['usd_list_price_no_free_tier'].sum():.2f} $)")
+    print(f"  -> {out}/campaign_cost.csv ({len(camp)} postes)")
 
 
 def summary(raw, out, warmup):

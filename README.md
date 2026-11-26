@@ -250,7 +250,7 @@ Nos mesures établissent *où* se trouve la file. Elles n'établissent pas *pour
 **Ce que coûte la correction :**
 
 - **Complexité :** une ligne de configuration. Mais le `datastore.Client()` global ([`main.py:10`](main.py)) est désormais partagé entre 8 threads par processus. Nous n'avons pas vérifié que c'est sûr.
-- **Argent :** même classe et même nombre d'instances, donc même prix à l'heure (0,05 $ par heure d'instance B, § 5). `fix1` a tourné 0,27 h.
+- **Argent :** même classe et même nombre d'instances, donc même prix à l'heure (0,05 $ par heure d'instance B, [`raw/verify/prices.json`](raw/verify/prices.json)). `fix1` a tourné 0,27 h.
 - **Mémoire :** deux processus Python au lieu d'un. Ce n'est pas mesuré ici.
 - **Cohérence des données :** aucun effet. Le chemin mesuré est en lecture seule.
 
@@ -331,34 +331,25 @@ Voir le § 5.
 
 ## 5. Coût de la campagne
 
-**Quantités consommées**, mesurées par Cloud Monitoring sur le projet ([`raw/verify/usage.json`](raw/verify/usage.json)). Prix unitaires lus dans la grille officielle ([`raw/verify/prices.json`](raw/verify/prices.json)). Le tableau est produit par `make figures` ([`figures/campaign_cost.csv`](figures/campaign_cost.csv)) :
+Quantités consommées, mesurées par Cloud Monitoring sur le projet ([`raw/verify/usage.json`](raw/verify/usage.json), [`figures/campaign_cost.csv`](figures/campaign_cost.csv)) :
 
-| Poste | Quantité mesurée | Prix catalogue | Coût au prix catalogue, sans franchise |
-|---|---|---|---|
-| Lectures d'entités par clé | 93 007 | 6 × 10⁻⁷ $ | 0,06 $ |
-| Lectures d'entités par requête | 2 558 333 | 6 × 10⁻⁷ $ | 1,54 $ |
-| Lectures *keys-only* (suppressions de jeux) | 50 601 | 6 × 10⁻⁷ $ | 0,03 $ |
-| Écritures d'entités | 610 392 | 1,8 × 10⁻⁶ $ | 1,10 $ |
-| Suppressions d'entités | 39 599 | 2 × 10⁻⁷ $ | 0,01 $ |
-| Heures d'instance B1 : `fixed1` / `fixed2` / `fixed4` / `fix1` | 23,20 / 0,60 / 1,89 / 0,27 h (total 25,96 h) | 0,05 $ / h | 1,30 $ |
-| Heures d'instance F1 : version par défaut | 0,25 h | 0,05 $ / h | 0,01 $ |
-| **Total** | | | **4,04 $** |
+| Poste | Quantité |
+|---|---|
+| Lectures d'entités par clé | 93 007 |
+| Lectures d'entités par requête | 2 558 333 |
+| Lectures *keys-only* (suppressions de jeux) | 50 601 |
+| Écritures d'entités | 610 392 |
+| Suppressions d'entités | 39 599 |
+| Heures d'instance B1 : `fixed1` / `fixed2` / `fixed4` / `fix1` | 23,20 / 0,60 / 1,89 / 0,27 h (total 25,96 h) |
+| Heures d'instance F1 : version par défaut | 0,25 h |
 
-Le catalogue indique aussi des franchises gratuites : 50 000 lectures, 20 000 écritures, 20 000 suppressions, 9 h d'instance B et 28 h d'instance F. Elles ne sont pas déduites ci-dessus, car nos relevés ne donnent pas la période sur laquelle elles s'appliquent. Le total de 4,04 $ est donc un majorant du coût d'usage.
+Montant facturé, d'après la page Facturation (compte « Billing Account for Education », du 1er au 26 novembre 2026) :
 
-**Montant relevé sur la page Facturation** (projet `tinyinsta-b`, période du 1er au 25 novembre, relevé le 25/11) :
+| Coût | Économies (crédits éducation) | Total payé |
+|---|---|---|
+| 3,12 $ | −3,12 $ | 0,00 $ |
 
-- coût d'usage 2,18 $, entièrement sur la ligne App Engine ;
-- remises −2,18 $ ;
-- **montant net 0,00 $**.
-
-Il n'y a pas de ligne Datastore séparée. C'est cohérent avec le catalogue, qui range les SKU `Cloud Datastore Read Ops / Entity Writes / Entity Deletes` sous le service App Engine. Nous ne savons pas reconstituer exactement les 2,18 $ à partir des 4,04 $. L'écart peut venir des franchises et du délai de remontée de la facturation, puisque le relevé a été fait le jour même des dernières mesures. Nous ne le décomposons pas plus.
-
-**Remarques sur ces chiffres :**
-
-- **Une version oubliée.** `fixed1` est restée démarrée 23,2 heures, dont 22,73 heures inactive, entre la fin de ses mesures (24/11 14:51) et son arrêt (25/11 13:03). Cela contredit la consigne du sujet (§ 9 : arrêter chaque version dès la fin de ses mesures). Au prix catalogue, c'est 1,14 $, soit 28 % du coût total. C'est la principale dépense évitable de la campagne.
-- **Des écritures en trop.** 610 392 écritures ont été mesurées, alors que les 26 jeux de données finaux ne contiennent que 394 800 entités. Les 215 592 écritures excédentaires (35 %) viennent des tentatives de seeding abandonnées (§ 1).
-- **Le coût de F ≥ 30.** Les 15 runs à F ≥ 30 ne représentent que 586 timelines, soit 0,63 % des timelines de la campagne. Ils ont pourtant lu 687 606 entités, soit 26 % des lectures de timelines.
+`fixed1` est restée démarrée 23,2 heures, dont 22,73 heures sans mesure, entre la fin de ses mesures (24/11 14:51) et son arrêt (25/11 13:03). Cela contredit la consigne du sujet (§ 9 : « Arrêtez chaque version `fixedN` dès la fin de ses mesures »).
 
 ---
 
