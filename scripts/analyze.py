@@ -24,13 +24,16 @@ import numpy as np
 import pandas as pd
 
 LIMIT = 20
-# limite du IN mesuree par bench/verify.py (raw/verify/in_limit.json)
+
+#limite du IN mesuree par bench/verify.py (raw/verify/in_limit.json)
+
 IN_LIMIT = 30
 CLIFF_F = IN_LIMIT
 
 DATASETS = {"u100": (100, 20, 20), "base": (1000, 20, 20), "u10k": (10000, 20, 20),
             "p10": (100, 10, 20), "p100": (100, 100, 20), "p1000": (100, 1000, 20),
             **{f"f{f:02d}": (120, 20, f) for f in range(5, 101, 5)}}
+
 
 COL = {1: "#1f4e79", 2: "#c1121f", 4: "#2a9d8f", 8: "#9d4edd"}
 
@@ -61,6 +64,7 @@ def load_run(path: str, warmup: float) -> dict | None:
     kept = df[df["T_START"] >= t0 + warmup]
     if len(kept) < 5:
         kept = df
+
 
     codes_all = df["STATUS"].fillna(0).astype(int).value_counts().sort_index()
     errs_all = df["ERROR"].dropna().astype(str)
