@@ -256,15 +256,13 @@ def fig2(d, out):
         c = COL.get(n, "#444")
         ax.plot(g["C"], g["client_ms_median"], "o-", lw=1.8, ms=5, color=c,
                 label=f"N = {n}, médiane mesurée")
-        ax.plot(g["C"], g["client_ms_mean"], "x", ms=7, color=c,
-                label=f"N = {n}, moyenne mesurée")
         ax.plot(g["C"], g["little_latency_ms"], "--", lw=1.2, color=c, alpha=.75,
                 label=f"N = {n}, Little (C / débit)")
     log2_c(ax, d)
     ax.set_yscale("log")
     style(ax, "utilisateurs Locust simultanés (C)", "latence client (ms)",
           "Fig. 2b : latence selon la concurrence, et loi de Little", sub)
-    ax.legend(frameon=False, fontsize=7, ncol=3)
+    ax.legend(frameon=False, fontsize=8, ncol=3)
     fig.tight_layout()
     save(d[cols], fig, "fig2b", out)
 

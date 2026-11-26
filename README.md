@@ -169,7 +169,7 @@ Les journaux de `fixed1` confirment la configuration réellement démarrée : `U
 
 ![Fig. 2b](figures/fig2b.png)
 
-*Fig. 2b : latence client médiane (trait plein), latence moyenne (croix) et prédiction de Little `C / débit` (pointillés). Données : [`figures/fig2b.csv`](figures/fig2b.csv).*
+*Fig. 2b : latence client médiane (trait plein) et prédiction de Little `C / débit` (pointillés), une couleur par N. Jeu `base` (U = 1 000, P = 20, F = 20). Données : [`figures/fig2b.csv`](figures/fig2b.csv).*
 
 #### Interprétation
 
