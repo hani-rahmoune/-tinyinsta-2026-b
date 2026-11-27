@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# PARTIE 3 — version corrigee : identique a fixed1 (1 instance, manual scaling,
-# B1) MAIS gunicorn avec 2 workers x 8 threads au lieu du defaut (1 worker
-# synchrone, 1 thread). HYPOTHESE testee en partie 3 : des threads permettraient
-# de servir plusieurs requetes en parallele. Resultat : refutee (README, 2.3).
+# Partie 3 : version fix1, identique a fixed1 (B1, 1 instance, manual scaling)
+# sauf gunicorn, lance avec 2 workers x 8 threads au lieu d'un worker synchrone.
 #
 #   ./deploy_fix.sh
 #   URL=$(gcloud app versions describe fix1 --service default --format='value(versionUrl)')

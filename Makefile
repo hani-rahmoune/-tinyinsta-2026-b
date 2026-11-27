@@ -1,7 +1,7 @@
-# TinyInsta 2026 — benchmark campaign
+# TinyInsta 2026, campagne de mesures
 .PHONY: figures install clean-figures
 
-## regenerate every CSV and PNG in figures/ from raw/ (the one command the subject asks for)
+# regenere toutes les figures et tous les CSV de figures/ a partir de raw/
 figures:
 	python scripts/analyze.py
 

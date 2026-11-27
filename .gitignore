@@ -1,7 +1,7 @@
 __pycache__/
-# Course material — not ours to republish
+# supports du cours
 *.pptx
 *.pdf
-# generated locally
+# fichiers crees par deploy_fixed.sh et deploy_fix.sh
 app-fixed-*.yaml
 app-fix1.yaml

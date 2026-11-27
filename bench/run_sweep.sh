@@ -32,4 +32,4 @@ for c in 1 2 4 8 16 32 64; do
 done
 
 echo
-echo "Balayage $TAG N=$N termine. ARRETEZ la version : gcloud app versions stop <version>"
+echo "Balayage $TAG N=$N termine. Penser a arreter la version : gcloud app versions stop <version>"
